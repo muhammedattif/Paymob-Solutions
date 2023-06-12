@@ -36,11 +36,11 @@ class AcceptAPIClient:
         Args:
             merchant_order_id (str): Internal Order ID
             amount_cents (str): Amount that will be paid (In Cents)
-            currency (str): _description_
-            delivery_needed (bool): Set it to be True if your order needs to be delivered by Accept's product delivery services.
-            items (list): list of objects contains the contents of the order if it is existing, send it as empty array if it is not available. 
-            shipping_data (dict): Mandatory if your order needs to be delivered, otherwise you can delete the whole object.
-            shipping_details (dict): Mandatory if your order needs to be delivered, otherwise you can delete the whole object.
+            currency (str): The currency related to this payment.
+            delivery_needed (bool): Set it to be True if your order needs to be delivered by Accept's product delivery services. Defaults to False.
+            items (list): list of objects contains the contents of the order if it is existing, send it as empty array if it is not available. Defaults to [].
+            shipping_data (dict): Mandatory if your order needs to be delivered, otherwise you can delete the whole object. Defaults to {}.
+            shipping_details (dict): Mandatory if your order needs to be delivered, otherwise you can delete the whole object. Defaults to {}.
             
 
         Returns:
@@ -70,19 +70,19 @@ class AcceptAPIClient:
     def create_payment_key(
         self,
         order_id: str,
-        expiration: int,
         amount_cents: str,
         currency: str,
         billing_data: dict,
         integration_id: int,
         card_token_key: str = None,
+        expiration: int = 3600, # 1 Hour
         lock_order_when_paid: bool = False
     ) -> Tuple[str, Union[str, None], Union[str, None]]:
         """Create Payment Key
 
         Args:
             order_id (str): External order id
-            expiration (int): The expiration time of this payment token in seconds. (The maximum is 3600 seconds which is an hour)
+            expiration (int): The expiration time of this payment token in seconds. (The maximum is 3600 seconds which is an hour). Defaulkts to 3600.
             amount_cents (str): Amount that will be paid
             currency (str): Payment Currency
             billing_data (dict): The billing data related to the customer related to this payment.
