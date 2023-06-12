@@ -8,7 +8,7 @@ import requests
 from .config import ACCEPT_APIS_TIMEOUT_SECONDES, Credentials, URLsConfig
 from .response_codes import (
     SUCCESS, 
-    JSON_DECODE_ERROR, 
+    JSON_DECODE_EXCEPTION, 
     UNHANDLED_EXCEPTION, 
     REQUEST_EXCEPTION,
     HTTP_EXCEPTION,
@@ -50,14 +50,14 @@ class AcceptConnection:
 
         request_body = {"api_key": Credentials.ACCEPT_API_KEY}
 
-        _, data, _ = self.get(
+        _, data, _ = self.post(
             url=URLsConfig.AUTH_TOKEN_URL,
             json=request_body
         )
 
         # TODO: Validates APIs Return Data Option
-        
-        return data.get("token")
+
+        return data.get("token") if SUCCESS else None
     
     def get(self, *args, **kwargs) -> Tuple[str, Dict[str, Any], Union[str, None]]:
         """Wrapper of requests.get method
@@ -69,17 +69,18 @@ class AcceptConnection:
             Tuple[str, Dict[str, Any], Union[str, None]]: Tuple containes the Following (Code, Data, Success/Error Message)
         """
         # TODO: The Following Logic will be Abstracted
+        reponse_data = None
         try:
             response = self.session.get(
                 timeout=ACCEPT_APIS_TIMEOUT_SECONDES,
                 *args, **kwargs
             )
-            response.raise_for_status()
             reponse_data = response.json()
+            response.raise_for_status()
         except json.JSONDecodeError as error:
-            return JSON_DECODE_ERROR, None, JSON_DECODE_EXCEPTION_MESSAGE.format(error=error)
+            return JSON_DECODE_EXCEPTION, None, JSON_DECODE_EXCEPTION_MESSAGE.format(error=error)
         except requests.exceptions.HTTPError as error:
-            return HTTP_EXCEPTION, None, HTTP_EXCEPTION_MESSAGE.format(error=error)
+            return HTTP_EXCEPTION, reponse_data, HTTP_EXCEPTION_MESSAGE.format(error=error)
         except requests.exceptions.RequestException as error:
             return REQUEST_EXCEPTION, None, REQUEST_EXCEPTION_MESSAGE.format(error=error)
         except Exception as error:
@@ -98,17 +99,18 @@ class AcceptConnection:
             Tuple[str, Dict[str, Any], Union[str, None]]: Tuple containes the Following (Code, Data, Success/Error Message)
         """
         # TODO: The Following Logic will be Abstracted
+        reponse_data = None
         try:
             response = self.session.post(
                 timeout=ACCEPT_APIS_TIMEOUT_SECONDES,
                 *args, **kwargs
             )
-            response.raise_for_status()
             reponse_data = response.json()
+            response.raise_for_status()
         except json.JSONDecodeError as error:
-            return JSON_DECODE_ERROR, None, JSON_DECODE_EXCEPTION_MESSAGE.format(error=error)
+            return JSON_DECODE_EXCEPTION, None, JSON_DECODE_EXCEPTION_MESSAGE.format(error=error)
         except requests.exceptions.HTTPError as error:
-            return HTTP_EXCEPTION, None, HTTP_EXCEPTION_MESSAGE.format(error=error)
+            return HTTP_EXCEPTION, reponse_data, HTTP_EXCEPTION_MESSAGE.format(error=error)
         except requests.exceptions.RequestException as error:
             return REQUEST_EXCEPTION, None, REQUEST_EXCEPTION_MESSAGE.format(error=error)
         except Exception as error:

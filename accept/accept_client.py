@@ -4,6 +4,7 @@ from typing import Any, Dict, Union, Tuple
 from .config import URLsConfig
 from .utils import PaymentSubTypes
 from .accept_connection import AcceptConnection
+from .response_codes import SUCCESS
 
 
 class AcceptAPIClient:
@@ -25,10 +26,10 @@ class AcceptAPIClient:
         merchant_order_id: str,
         amount_cents: str,
         currency: str,
-        delivery_needed: bool,
-        items: list,
-        shipping_data: dict,
-        shipping_details: dict
+        delivery_needed: bool = False,
+        items: list = [],
+        shipping_data: dict = {},
+        shipping_details: dict = {}
     ) -> Tuple[str, Dict[str, Any], Union[str, None]]:
         """Register an order to Accept's database
 
@@ -62,8 +63,8 @@ class AcceptAPIClient:
         )
     
         # TODO: Validates APIs Return Data Option
-        
-        message = "Order Created Successfully"
+        if code == SUCCESS:
+            message = "Order Created Successfully"
         return code, order_data, message
 
     def create_payment_key(
@@ -111,9 +112,10 @@ class AcceptAPIClient:
         )
         
         # TODO: Validates APIs Return Data Option
-        
-        message = "Payment Key Created Successfully"
-        payment_key = data.get("token")
+        payment_key = None
+        if code == SUCCESS:
+            message = "Payment Key Created Successfully"
+            payment_key = data.get("token")
         return code, payment_key, message
 
     def get_order(
@@ -134,8 +136,8 @@ class AcceptAPIClient:
         )
         
         # TODO: Validates APIs Return Data Option
-        
-        message = "Successfully Retrieved Order: {0} Data: {0}".format(order_id)
+        if code == SUCCESS:
+            message = "Successfully Retrieved Order: {0} Data: {0}".format(order_id)
         return code, order_data, message
 
     def proceed_kiosk_wallet_payment(
@@ -172,6 +174,6 @@ class AcceptAPIClient:
         )
         
         # TODO: Validates APIs Return Data Option
-        
-        message = "Kiosk or Wallet Payment Processed Successfully"
+        if code == SUCCESS:
+            message = "Kiosk or Wallet Payment Processed Successfully"
         return code, payment_data, message
