@@ -5,7 +5,7 @@ from typing import Any, Dict, Union, Tuple
 # Other Third Party Imports
 import requests
 
-from .config import TIMEOUT_SECONDES, Credentials, URLsConfig
+from .config import ACCEPT_APIS_TIMEOUT_SECONDES, Credentials, URLsConfig
 from .response_codes import (
     SUCCESS, 
     JSON_DECODE_ERROR, 
@@ -73,7 +73,7 @@ class AcceptConnection:
         # TODO: The Following Logic will be Abstracted
         try:
             response = self.session.get(
-                timeout=TIMEOUT_SECONDES,
+                timeout=ACCEPT_APIS_TIMEOUT_SECONDES,
                 *args, **kwargs
             )
             reponse_data = response.json()
@@ -104,7 +104,7 @@ class AcceptConnection:
         # TODO: The Following Logic will be Abstracted
         try:
             response = self.session.post(
-                timeout=TIMEOUT_SECONDES,
+                timeout=ACCEPT_APIS_TIMEOUT_SECONDES,
                 *args, **kwargs
             )
             reponse_data = response.json()

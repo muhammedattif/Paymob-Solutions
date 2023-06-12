@@ -2,7 +2,7 @@
 from decouple import config
 
 # Constants
-TIMEOUT_SECONDES = 10
+ACCEPT_APIS_TIMEOUT_SECONDES = config("ACCEPT_APIS_TIMEOUT_SECONDES", cast=int, default=10)
 
 # Credentials Config
 class Credentials:
