@@ -10,14 +10,12 @@ from .response_codes import (
     SUCCESS, 
     JSON_DECODE_ERROR, 
     UNHANDLED_EXCEPTION, 
-    NON_2XX_STATUS_CODE, 
     REQUEST_EXCEPTION,
     HTTP_EXCEPTION,
     JSON_DECODE_EXCEPTION_MESSAGE, 
     REQUEST_EXCEPTION_MESSAGE, 
     HTTP_EXCEPTION_MESSAGE, 
     UNHANDLED_EXCEPTION_MESSAGE,
-    NON_2XX_ERROR_MESSAGE,
 )
 
 class AcceptConnection:
@@ -76,6 +74,7 @@ class AcceptConnection:
                 timeout=ACCEPT_APIS_TIMEOUT_SECONDES,
                 *args, **kwargs
             )
+            response.raise_for_status()
             reponse_data = response.json()
         except json.JSONDecodeError as error:
             return JSON_DECODE_ERROR, None, JSON_DECODE_EXCEPTION_MESSAGE.format(error=error)
@@ -86,9 +85,6 @@ class AcceptConnection:
         except Exception as error:
             return UNHANDLED_EXCEPTION, None, UNHANDLED_EXCEPTION_MESSAGE.format(error=error)
 
-        if not response.ok:
-            return NON_2XX_STATUS_CODE, None, NON_2XX_ERROR_MESSAGE.format(status_code=response.status_code)
-        
         message = "API Successfully Called."
         return SUCCESS, reponse_data, message
 
@@ -107,6 +103,7 @@ class AcceptConnection:
                 timeout=ACCEPT_APIS_TIMEOUT_SECONDES,
                 *args, **kwargs
             )
+            response.raise_for_status()
             reponse_data = response.json()
         except json.JSONDecodeError as error:
             return JSON_DECODE_ERROR, None, JSON_DECODE_EXCEPTION_MESSAGE.format(error=error)
@@ -117,8 +114,5 @@ class AcceptConnection:
         except Exception as error:
             return UNHANDLED_EXCEPTION, None, UNHANDLED_EXCEPTION_MESSAGE.format(error=error)
 
-        if not response.ok:
-            return NON_2XX_STATUS_CODE, None, NON_2XX_ERROR_MESSAGE.format(status_code=response.status_code)
-        
         message = "API Successfully Called."
         return SUCCESS, reponse_data, message
