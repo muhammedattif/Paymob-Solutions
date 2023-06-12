@@ -12,7 +12,7 @@ class Credentials:
 
 # URLs Config
 class URLsConfig:
-    ACCEPT_BASE_URL = config("PAYMOB_ACCEPT_BASE_URL", default="https://accept.paymobsolutions.com")
+    ACCEPT_BASE_URL = config("PAYMOB_ACCEPT_BASE_URL", default="https://accept.paymob.com")
     AUTH_TOKEN_URL = "{0}/api/auth/tokens".format(ACCEPT_BASE_URL)
     CREATE_ORDER_URL = "{0}/api/ecommerce/orders".format(ACCEPT_BASE_URL)
     GET_ORDER_URL = "{0}/api/ecommerce/orders/".format(ACCEPT_BASE_URL) + "{order_id}"
