@@ -1,0 +1,19 @@
+# https://black.readthedocs.io/en/stable/usage_and_configuration/index.html
+[tool.black]
+line-length=120
+
+# https://pycqa.github.io/isort/docs/configuration/options.html
+[tool.isort]
+profile="black"
+line_length="120"
+skip=["__init__.py"] # can be removed later on when changing order in __init__.py does not cause circular import
+filter_files="true"
+
+# optional parameters that make imports more readable 
+sections="FUTURE,STDLIB,THIRDPARTY,FIRSTPARTY,LOCALFOLDER"
+# Import comment messages
+import_heading_future="Future Imports"
+import_heading_stdlib="Python Standard Library Imports"
+import_heading_thirdparty="Other Third Party Imports"
+import_heading_firstparty="First Party Imports"
+import_heading_folder="Local Folder Imports"

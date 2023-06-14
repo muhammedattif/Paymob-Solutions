@@ -1,0 +1,46 @@
+##### IMPORTANT: Check pyproject.toml for the configuration of these hooks #####
+
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+
+# Global exclude to ignore any folder named migrations
+
+#Hooks Definition
+repos:
+
+# autoflake removes unused imports and unused variables from Python code
+# https://github.com/PyCQA/autoflake#readme
+-   repo: https://github.com/PyCQA/autoflake
+    rev: v1.4
+    hooks:
+    -   id: autoflake
+        # add to the pyproject.toml file when https://github.com/PyCQA/autoflake/issues/59 is solved
+        args: [ 
+        "--remove-all-unused-imports",
+        "--ignore-init-module-imports",
+        "--remove-unused-variables",
+        "-i",
+    ]
+
+# A tool (and pre-commit hook) to automatically add trailing commas to calls and literals.
+# https://github.com/asottile/add-trailing-comma#readme
+-   repo: https://github.com/asottile/add-trailing-comma
+    rev: v2.2.3
+    hooks:
+    -   id: add-trailing-comma
+
+#isort: isort your imports, so you don't have to.
+#See https://pycqa.github.io/isort/index.html for more info
+-   repo: https://github.com/pycqa/isort
+    rev: 5.10.1
+    hooks:
+    -   id: isort
+        name: isort (python)
+
+#black: The uncompromising Python code formatter
+#See https://black.readthedocs.io/en/stable/ for more info
+-   repo: https://github.com/psf/black
+    rev: 22.3.0
+    hooks:
+    -   id: black
+      

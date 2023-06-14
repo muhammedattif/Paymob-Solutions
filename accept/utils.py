@@ -18,7 +18,6 @@ class PaymentSubTypes:
 
 
 class AcceptUtils:
-    
     @staticmethod
     def generate_merchant_order_id(mid_key: str, identifier: int):
         """Constructs merchant order id from mid_key and identifier
@@ -181,7 +180,7 @@ class AcceptUtils:
 
         return cls._generate_processed_hmac(hmac_dict=hmac_dict)
 
-    # Public Method that can be used Directly to Validate HMAC 
+    # Public Method that can be used Directly to Validate HMAC
     @classmethod
     def validate_processed_hmac(cls, incoming_hmac: str, callback_obj_dict: Dict[str, Any], callback_type: str) -> bool:
         """Validates HMAC for processed callback
@@ -208,4 +207,3 @@ class AcceptUtils:
             return False
 
         return True
-    
