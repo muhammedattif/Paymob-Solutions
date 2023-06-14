@@ -27,9 +27,11 @@ pip install --upgrade paymob
 
 # Usage
 
+### Services
+
 1- [Accept Client](docs/services/accept.md)
 
-
+---
 
 ### Handling APIs Response
 
