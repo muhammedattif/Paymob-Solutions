@@ -140,30 +140,23 @@ class AcceptAPIClient:
             message = "Successfully Retrieved Order: {0} Data: {0}".format(order_id)
         return code, order_data, message
 
-    def proceed_kiosk_wallet_payment(
+    def proceed_kiosk_payment(
         self,
         payment_key: str,
-        identifier: str,
-        sub_type: str,
     ) -> Tuple[str, Dict[str, Any], Union[str, None]]:
-        """Proceed Kiosk or Wallet Payment
+        """Proceed Kiosk Payment
 
         Args:
             payment_key (str): Obtained Payment Key
-            identifier (str): Wallet Number or AGGREGATOR for Kiosk Payment
-            sub_type (str): AGGREGATOR or WALLET.
 
         Returns:
             Tuple[str, Dict[str, Any], Union[str, None]]: (Code, Payment Data Dict, Success/Error Message)
         """
 
-        if sub_type == PaymentSubTypes.AGGREGATOR:
-            identifier = PaymentSubTypes.AGGREGATOR
-
         request_body = {
             "source": {
-                "identifier": identifier,
-                "subtype": sub_type,
+                "identifier": PaymentSubTypes.AGGREGATOR,
+                "subtype": PaymentSubTypes.AGGREGATOR,
             },
             "payment_token": payment_key,
         }
@@ -175,5 +168,38 @@ class AcceptAPIClient:
 
         # TODO: Validates APIs Return Data Option
         if code == SUCCESS:
-            message = "Kiosk or Wallet Payment Processed Successfully"
+            message = "Kiosk Payment Processed Successfully"
+        return code, payment_data, message
+
+    def proceed_wallet_payment(
+        self,
+        payment_key: str,
+        identifier: str,
+    ) -> Tuple[str, Dict[str, Any], Union[str, None]]:
+        """Proceed Wallet Payment
+
+        Args:
+            payment_key (str): Obtained Payment Key
+            identifier (str): Wallet Number or AGGREGATOR for Kiosk Payment
+
+        Returns:
+            Tuple[str, Dict[str, Any], Union[str, None]]: (Code, Payment Data Dict, Success/Error Message)
+        """
+
+        request_body = {
+            "source": {
+                "identifier": identifier,
+                "subtype": PaymentSubTypes.WALLET,
+            },
+            "payment_token": payment_key,
+        }
+
+        code, payment_data, message = self.connection.post(
+            url=URLsConfig.PAY_URL,
+            json=request_body,
+        )
+
+        # TODO: Validates APIs Return Data Option
+        if code == SUCCESS:
+            message = "Wallet Payment Processed Successfully"
         return code, payment_data, message

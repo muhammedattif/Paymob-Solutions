@@ -7,7 +7,29 @@ ACCEPT_API_KEY=<YOUR API KEY>
 ACCEPT_HMAC_SECRET=<YOUR HMAC SECRET>
 ```
 
-After setting up your secret keys, now you can use Accept API interfaces.
+After setting up your secret keys, now you will be able to use Accept API interfaces.
+
+
+# Payment Flow
+
+Payment Flow for [IFrame](#create-iframe-url) Payment
+```mermaid
+flowchart TD
+    A(Create Order) --> B(Create Payment Key) --> C(Create IFrame)
+```
+
+Payment Flow for `Kiosk`, `Wallet`, `Cash` Payment
+
+```mermaid
+flowchart TD
+    A(Create Order) --> B(Create Payment Key)
+    B --> C{Proceed}
+    B --> D[Kiosk]
+    B --> E[Wallet]
+```
+
+
+# APIs
 
 #### Initialize `AcceptAPIClient`
 
@@ -55,6 +77,28 @@ code, order_data, message = accept_api_client.create_order(
 | `shipping_details` | `No` | `dict` |  Mandatory if your order needs to be delivered, otherwise you can delete the whole object |
 
 
+#### Get Order
+
+**Example**
+
+```python
+from paymob.accept import AcceptAPIClient
+
+accept_api_client = AcceptAPIClient()
+
+order_id = "<Paymob Order Id>"
+integration_id = "<Your Integration ID>"
+code, order_data, message = accept_api_client.get_order(
+    order_id=order_id,
+)
+```
+
+**Parameters**
+
+| Parameter | Required? | Default | Description |
+| --- | --- | --- | --- |
+| `order_id` | `Yes` | - | Order ID retrieved from [Create Order API](#create-order) |
+
 
 #### Create Payment Key
 
@@ -62,7 +106,6 @@ code, order_data, message = accept_api_client.create_order(
 
 ```python
 from paymob.accept import AcceptAPIClient
-from paymob.accept.utils import AcceptUtils
 
 accept_api_client = AcceptAPIClient()
 
@@ -70,14 +113,15 @@ order_id = "<order_id>"
 amount_cents = 1000
 currency = "EGP"
 billing_data = {}
-integration_id = <Your Integration ID>
-code, order_data, message = accept_api_client.create_payment_key(
+integration_id = "<Your Integration ID>"
+code, payment_key, message = accept_api_client.create_payment_key(
     order_id=order_id,
     amount_cents=amount_cents,
     currency=currency,
     billing_data=billing_data,
     integration_id=integration_id,
 )
+
 ```
 
 **Parameters**
@@ -94,4 +138,175 @@ code, order_data, message = accept_api_client.create_payment_key(
 | `lock_order_when_paid` | `No` | `False` | A flag prevent this order to be paid again if it is paid |
 
 
+#### Wallet Payment
+
+After creating the payment key, you may need to processed to `Mobile Wallets` payment, so you need to use the following API to get the `redirect URL`.
+
+**Example**
+
+```python
+from paymob.accept import AcceptAPIClient
+
+accept_api_client = AcceptAPIClient()
+
+payment_key = "<Payment Key>"
+identifier = "<Wallet Mobile Number>"
+code, payment_data, message = accept_api_client.proceed_wallet_payment(
+    payment_key=payment_key,
+    identifier=identifier
+)
+```
+
+**Parameters**
+
+| Parameter | Required? | Default | Description |
+| --- | --- | --- | --- |
+| `payment_key` | `Yes` | - | Payment Key obtained from [Create Payment Key](#create-payment-key) |
+| `identifier` | `Yes` | - | Wallet Mobile Number |
+
+
+#### Kiosk Payment
+
+After creating the payment key, you may need to processed to `Kiosk` payment, so you need to use the following API to get the `bill_reference`.
+
+**Example**
+
+```python
+from paymob.accept import AcceptAPIClient
+
+accept_api_client = AcceptAPIClient()
+
+payment_key = "<Payment Key>"
+code, payment_data, message = accept_api_client.proceed_kiosk_payment(
+    payment_key=payment_key,
+)
+```
+
+**Parameters**
+
+| Parameter | Required? | Default | Description |
+| --- | --- | --- | --- |
+| `payment_key` | `Yes` | - | Payment Key obtained from [Create Payment Key](#create-payment-key) |
+
+# HMAC Validation
+
+Accept callbacks rely on HMAC authentication to verify Accept's identity and integrity of its data.
+Every and each callback invoked from Accept's server-side has its own HMAC validation.
+
+So, to authenticate the incoming HMAC all you've to do is to use the utility method `validate_processed_hmac`
+it will automatically calculates the HMAC from the Callback Dict and then compares the calculated one againest incoming HMAC, it will return `True` if the HMAC is verified, otherwise it will return `False`.
+
+**Example**
+
+```python
+from paymob.accept.utils import AcceptUtils
+
+incoming_hmac = "<Incoming HMAC sent in query params>"
+callback_dict = "<Incoming Callback Dict>"
+is_valid = AcceptUtils.validate_processed_hmac(
+    incoming_hmac=payment_key,
+    callback_dict=callback_dict
+)
+```
+
+**Parameters**
+
+| Parameter | Required? | Default | Description |
+| --- | --- | --- | --- |
+| `payment_key` | `Yes` | - | Payment Key obtained from [Create Payment Key](#create-payment-key) |
+
+
+
+# Utility Methods
+
+We've implemented a few methods to help you during the integration/development process.
+
+### Generate Merchant Order ID
+
+It is a method that builds Merchant Order ID with the following format
+```
+<MidKey>_<Internal Order ID>__<Current Time>
+```
+
+If your merchant supports multiple categories of items, this format will help you to refer this category using the `MidKey` Param.
+
+**Example**
+
+```python
+from paymob.accept.utils import AcceptUtils
+
+mid_key = "<Type>"
+identifier = "<Internal Order ID>"
+merchant_order_id = AcceptUtils.generate_merchant_order_id(
+    mid_key=mid_key,
+    identifier=identifier
+)
+```
+
+**Parameters**
+
+| Parameter | Required? | Description |
+| --- | --- | --- |
+| `mid_key` | `Yes` | Type |
+| `identifier` | `Yes` | Internal Order ID |
+
+
+
+### Extract Mid key and Identifier
+
+It allowes you to reverse the previous process
+
+**Example**
+
+```python
+from paymob.accept.utils import AcceptUtils
+
+merchant_order_id = "x_1__112233"
+mid_key, identifier = AcceptUtils.extract_mid_key_and_identifier(
+    merchant_order_id=merchant_order_id,
+)
+```
+
+The `mid_key` will be `x` and `identifier` will be `1`
+
+
+### Create IFrame URL
+
+if you want to proceed with any of the following payment methods:
+
+- **Card**
+- **Premium Card Payments**
+- **Bank Installments**
+- **ValU**
+- **SOUHOOLA**
+- **GET_GO**
+- **Sympl**
+- **Forsa**
+- **NowPay**
+
+you need to render its `IFrame` to continue the payment process, So all you need to do is to use the following utility method to create the `IFrame`
+
+**Example**
+
+```python
+from paymob.accept.utils import AcceptUtils
+
+iframe_id = "<Payment Method IFrame>"
+payment_key = "<Payment Key>"
+iframe = AcceptUtils.create_iframe_url(
+    iframe_id=iframe_id,
+    payment_key=payment_key
+)
+```
+
+
+**Parameters**
+
+| Parameter | Required? | Description |
+| --- | --- | --- |
+| `iframe_id` | `Yes` | IFrame ID of the payment method [Get it from here][accept-iframes] |
+| `payment_key` | `Yes` | Payment Key obtained from [Create Payment Key](#create-payment-key) |
+
+
 [accept-dashboard]: https://accept.paymob.com/portal2/en/home
+[accept-iframes]: https://accept.paymob.com/portal2/en/iframes

@@ -55,7 +55,7 @@ class AcceptUtils:
         return mid_key, identifier
 
     @staticmethod
-    def construct_iframe_url(iframe_id: int, payment_key: str) -> str:
+    def create_iframe_url(iframe_id: int, payment_key: str) -> str:
         """Constructs Iframe URL
 
         Args:
@@ -182,7 +182,7 @@ class AcceptUtils:
 
     # Public Method that can be used Directly to Validate HMAC
     @classmethod
-    def validate_processed_hmac(cls, incoming_hmac: str, callback_obj_dict: Dict[str, Any], callback_type: str) -> bool:
+    def validate_processed_hmac(cls, incoming_hmac: str, callback_dict: Dict[str, Any]) -> bool:
         """Validates HMAC for processed callback
 
         Args:
@@ -193,9 +193,11 @@ class AcceptUtils:
         Returns:
             bool: True if HMAC is Valid, False otherwise
         """
-        if not isinstance(callback_obj_dict, dict):
+        if not isinstance(callback_dict, dict):
             return False
 
+        callback_type = callback_dict.get("type")
+        callback_obj_dict = callback_dict.get("obj")
         if callback_type == AcceptCallbackTypes.TRANSACTION:
             calculated_hmac = cls._generate_transaction_processed_hmac(callback_obj_dict)
         elif callback_type == AcceptCallbackTypes.CARD_TOKEN:
