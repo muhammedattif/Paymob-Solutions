@@ -10,6 +10,7 @@ platformdirs==3.5.3
 pre-commit==3.3.3
 python-decouple==3.8
 PyYAML==6.0
+pytest==7.3.2
 requests==2.31.0
 urllib3==2.0.3
 virtualenv==20.23.0
