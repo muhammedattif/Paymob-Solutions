@@ -38,17 +38,17 @@ pip install --upgrade paymob
 Each API Call retrieves a tuple which contains three values (Code, Data, Message)
 
 - **Code**: A Number that represents API state. [Codes Reference](#codes-reference) <span id="code"></span>
-- **Data**: The returned data of the API.
-- **Message**: A human readable description of the [Code](#code). You can use this message for debugging. <span id="message"></span>
+- **Data**: The returned data from the API.
+- **Message**: A human readable description of the [Code](#code). (You can use this message for debugging) <span id="message"></span>
 
 
-Successful API calls will return the following values:
+**Successful API calls will return the following values:**
 
 - **Code**: [One of the Following Codes](#success-codes)
 - **Data**: `dict` or `list` (Depending on the API response)
 - **Message**: Success meesage (Varies depending on what the API done)
 
-Unsuccessful API calls will return the following values:
+**Unsuccessful API calls will return the following values:**
 
 - **Code**: [One of the Following Codes](#error-codes)
 - **Data**: `None`
@@ -70,6 +70,11 @@ Unsuccessful API calls will return the following values:
 | `HTTP_EXCEPTION` | `22` | Non 2xx Status Code Returned |
 | `UNHANDLED_EXCEPTION` | `23` | Unhandled Exception [comment]: # Trace Error will be provided in the [message](#message) |
 
+
+You can import these code from 
+```python
+from paymob.accept.response_codes import SUCCESS, JSON_DECODE_EXCEPTION, REQUEST_EXCEPTION, HTTP_EXCEPTION, UNHANDLED_EXCEPTION
+```
 
 # Settings
 

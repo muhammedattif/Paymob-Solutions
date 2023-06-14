@@ -1,7 +1,7 @@
 # Requirements
 
 Before starting to use Accept APIs it needs to be configured with your account's secret keys which is
-available in your [Accept Paymob Dashboard][accept-dashboard]. in `.env` Set the following variables:
+available in your [Accept Dashboard][accept-dashboard]. in `.env` Set the following variables:
 ```
 ACCEPT_API_KEY=<YOUR API KEY>
 ACCEPT_HMAC_SECRET=<YOUR HMAC SECRET>
@@ -24,14 +24,14 @@ Payment Flow for `Kiosk`, `Wallet`, `Cash` Payment
 flowchart TD
     A(Create Order) --> B(Create Payment Key)
     B --> C{Proceed}
-    B --> D[Kiosk]
-    B --> E[Wallet]
+    C --> D[Kiosk]
+    C --> E[Wallet]
 ```
 
 
 # APIs
 
-#### Initialize `AcceptAPIClient`
+## Initialize `AcceptAPIClient`
 
 ```python
 from paymob.accept import AcceptAPIClient
@@ -39,9 +39,9 @@ from paymob.accept import AcceptAPIClient
 accept_api_client = AcceptAPIClient()
 ```
 
-by initializing an object from `AcceptAPIClient` a TCP connection session is established with Paymob and an `Auth Token` is automatically retrieved.
+by initializing an object from `AcceptAPIClient` a TCP connection session is established with Paymob server and an `Auth Token` is automatically retrieved.
 
-#### Create Order
+## Create Order
 
 **Example**
 
@@ -77,7 +77,7 @@ code, order_data, message = accept_api_client.create_order(
 | `shipping_details` | `No` | `dict` |  Mandatory if your order needs to be delivered, otherwise you can delete the whole object |
 
 
-#### Get Order
+## Get Order
 
 **Example**
 
@@ -100,7 +100,7 @@ code, order_data, message = accept_api_client.get_order(
 | `order_id` | `Yes` | - | Order ID retrieved from [Create Order API](#create-order) |
 
 
-#### Create Payment Key
+## Create Payment Key
 
 **Example**
 
@@ -138,7 +138,7 @@ code, payment_key, message = accept_api_client.create_payment_key(
 | `lock_order_when_paid` | `No` | `False` | A flag prevent this order to be paid again if it is paid |
 
 
-#### Wallet Payment
+## Wallet Payment
 
 After creating the payment key, you may need to processed to `Mobile Wallets` payment, so you need to use the following API to get the `redirect URL`.
 
@@ -165,7 +165,7 @@ code, payment_data, message = accept_api_client.proceed_wallet_payment(
 | `identifier` | `Yes` | - | Wallet Mobile Number |
 
 
-#### Kiosk Payment
+## Kiosk Payment
 
 After creating the payment key, you may need to processed to `Kiosk` payment, so you need to use the following API to get the `bill_reference`.
 
@@ -184,9 +184,11 @@ code, payment_data, message = accept_api_client.proceed_kiosk_payment(
 
 **Parameters**
 
-| Parameter | Required? | Default | Description |
-| --- | --- | --- | --- |
-| `payment_key` | `Yes` | - | Payment Key obtained from [Create Payment Key](#create-payment-key) |
+| Parameter | Required? | Description |
+| --- | --- | --- |
+| `payment_key` | `Yes` | Payment Key obtained from [Create Payment Key](#create-payment-key) |
+
+---
 
 # HMAC Validation
 
@@ -216,6 +218,7 @@ is_valid = AcceptUtils.validate_processed_hmac(
 | `payment_key` | `Yes` | - | Payment Key obtained from [Create Payment Key](#create-payment-key) |
 
 
+---
 
 # Utility Methods
 
