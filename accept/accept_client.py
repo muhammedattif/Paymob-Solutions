@@ -8,7 +8,7 @@ from .utils import PaymentSubTypes
 
 
 class AcceptAPIClient:
-    """Class for Accept APIs
+    """Class for Accept API's
     By Initializing an Instance from This class, an auth token is obtained automatically
     and You will be able to call The Following APIs:
         1- Create Order
@@ -137,7 +137,8 @@ class AcceptAPIClient:
 
         # TODO: Validates APIs Return Data Option
         if code == SUCCESS:
-            message = "Successfully Retrieved Order: {0} Data: {0}".format(order_id)
+            message = "Successfully Retrieved Order: {0} Data: {0}".format(
+                order_id)
         return code, order_data, message
 
     def proceed_kiosk_payment(
