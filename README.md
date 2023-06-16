@@ -3,6 +3,16 @@
 [![python](https://img.shields.io/badge/Python-v3.8-3776AB.svg?style=flat&logo=python&logoColor=yellow)](https://www.python.org)
 
 
+## Table of Contents
+
+- [Description](#description)
+- [Requirements](#requirements)
+- [Installation Instructions](#installation-instructions)
+- [Usage](#usage)
+  - [Services](#services)
+  - [Handling APIs Response](#handling-apis-response)
+- [Codes Reference](#codes-reference)
+
 # Description
 
 The Paymob Python library provides convenient access to the `Paymob` APIs from applications written in the Python language.

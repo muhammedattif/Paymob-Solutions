@@ -201,11 +201,11 @@ it will automatically calculates the HMAC from the Callback Dict and then compar
 **Example**
 
 ```python
-from paymob.accept.utils import AcceptUtils
+from paymob.accept.utils import HMACUtils
 
 incoming_hmac = "<Incoming HMAC sent in query params>"
 callback_dict = "<Incoming Callback Dict>"
-is_valid = AcceptUtils.validate_processed_hmac(
+is_valid = HMACUtils.validate_processed_hmac(
     incoming_hmac=payment_key,
     callback_dict=callback_dict
 )
