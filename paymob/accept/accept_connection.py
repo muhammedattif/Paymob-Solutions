@@ -51,7 +51,7 @@ class AcceptConnection:
         request_body = {"api_key": Credentials.ACCEPT_API_KEY}
 
         _, data, _ = self.post(
-            url=URLsConfig.AUTH_TOKEN_URL,
+            url=URLsConfig.AUTH_TOKEN,
             json=request_body,
         )
 
