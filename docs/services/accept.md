@@ -27,6 +27,7 @@ flowchart TD
     C --> D[Kiosk]
     C --> E[Wallet]
     C --> F[Cash]
+    C --> G[Card Token]
 ```
 
 
