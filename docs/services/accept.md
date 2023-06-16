@@ -215,9 +215,7 @@ code, payment_data, message = accept_api_client.proceed_cash_payment(
 
 ## Card Token Payment
 
-Prerequisites:
-
-Please ask your technical contact for a recurring payment setup, you should receive extra integration ID in your dashboard.
+**Prerequisites:** Please ask your technical contact for a recurring payment setup, you should receive extra integration ID in your dashboard.
 
 Now you've received your customer's card token, in order to perform recurring payments with this token, use the following API:
 
@@ -257,9 +255,9 @@ So, to authenticate the incoming HMAC all you've to do is to initialize an `HMAC
 ```python
 from paymob.accept import HMACValidator
 
-incoming_hmac = "<Incoming HMAC sent in query params>"
-callback_dict = "<Incoming Callback Dict>"
-hmac_validator = HMACValidator(incoming_hmac=payment_key, callback_dict=callback_dict
+incoming_hmac = "<HMAC sent in query params>"
+callback_dict = "<Callback Dict>"
+hmac_validator = HMACValidator(incoming_hmac=incoming_hmac, callback_dict=callback_dict
 hmac_validator.is_valid # Returns True or False
 )
 ```
@@ -269,7 +267,7 @@ hmac_validator.is_valid # Returns True or False
 | Parameter | Required? | Description |
 | --- | --- | --- |
 | `incoming_hmac` | `Yes` | HMAC Sent in the Callback Query Params |
-| `callback_dict` | `Yes` | Request Body |
+| `callback_dict` | `Yes` | Incoming Callback Dict (Request Body) |
 
 
 ---
@@ -278,7 +276,7 @@ hmac_validator.is_valid # Returns True or False
 
 We've implemented a few methods to help you during the integration/development process.
 
-### Generate Merchant Order ID
+### - Generate Merchant Order ID
 
 It is a method that builds Merchant Order ID with the following format
 ```
@@ -309,7 +307,7 @@ merchant_order_id = AcceptUtils.generate_merchant_order_id(
 
 
 
-### Extract Mid key and Identifier
+### - Extract Mid key and Identifier
 
 It allowes you to reverse the previous process
 
@@ -327,7 +325,7 @@ mid_key, identifier = AcceptUtils.extract_mid_key_and_identifier(
 The `mid_key` will be `x` and `identifier` will be `1`
 
 
-### Create IFrame URL
+### - Create IFrame URL
 
 if you want to proceed with any of the following payment methods:
 
