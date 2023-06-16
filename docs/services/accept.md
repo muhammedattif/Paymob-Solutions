@@ -26,12 +26,13 @@ flowchart TD
     B --> C{Proceed}
     C --> D[Kiosk]
     C --> E[Wallet]
+    C --> F[Cash]
 ```
 
 
 # APIs
 
-## Initialize `AcceptAPIClient`
+## - Initialize `AcceptAPIClient`
 
 ```python
 from paymob.accept import AcceptAPIClient
@@ -41,7 +42,7 @@ accept_api_client = AcceptAPIClient()
 
 by initializing an object from `AcceptAPIClient` a TCP connection session is established with Paymob server and an `Auth Token` is automatically retrieved.
 
-## Create Order
+## - Create Order
 
 **Example**
 
@@ -77,7 +78,7 @@ code, order_data, message = accept_api_client.create_order(
 | `shipping_details` | `No` | `dict` |  Mandatory if your order needs to be delivered, otherwise you can delete the whole object |
 
 
-## Get Order
+## - Get Order
 
 **Example**
 
@@ -100,7 +101,7 @@ code, order_data, message = accept_api_client.get_order(
 | `order_id` | `Yes` | - | Order ID retrieved from [Create Order API](#create-order) |
 
 
-## Create Payment Key
+## - Create Payment Key
 
 **Example**
 
@@ -138,7 +139,7 @@ code, payment_key, message = accept_api_client.create_payment_key(
 | `lock_order_when_paid` | `No` | `False` | A flag prevent this order to be paid again if it is paid |
 
 
-## Wallet Payment
+## - Wallet Payment
 
 After creating the payment key, you may need to processed to `Mobile Wallets` payment, so you need to use the following API to get the `redirect URL`.
 
@@ -165,7 +166,7 @@ code, payment_data, message = accept_api_client.proceed_wallet_payment(
 | `identifier` | `Yes` | - | Wallet Mobile Number |
 
 
-## Kiosk Payment
+## - Kiosk Payment
 
 After creating the payment key, you may need to processed to `Kiosk` payment, so you need to use the following API to get the `bill_reference`.
 
@@ -189,7 +190,7 @@ code, payment_data, message = accept_api_client.proceed_kiosk_payment(
 | `payment_key` | `Yes` | Payment Key obtained from [Create Payment Key](#create-payment-key) |
 
 
-## CASH Payment
+## - CASH Payment
 
 After creating the payment key, you may need to processed to `Cash` payment, so you need to use the following API
 
@@ -213,7 +214,7 @@ code, payment_data, message = accept_api_client.proceed_cash_payment(
 | `payment_key` | `Yes` | Payment Key obtained from [Create Payment Key](#create-payment-key) |
 
 
-## Card Token Payment
+## - Card Token Payment
 
 **Prerequisites:** Please ask your technical contact for a recurring payment setup, you should receive extra integration ID in your dashboard.
 
@@ -339,14 +340,14 @@ if you want to proceed with any of the following payment methods:
 - **Forsa**
 - **NowPay**
 
-you need to render its `IFrame` to continue the payment process, So all you need to do is to use the following utility method to create the `IFrame`
+you need to render its `IFrame` to continue the payment process, So all you need to do is to use the following utility method to create the `IFrame URL` 
 
 **Example**
 
 ```python
 from paymob.accept.utils import AcceptUtils
 
-iframe_id = "<Payment Method IFrame>"
+iframe_id = "<Payment Method IFrame ID>"
 payment_key = "<Payment Key>"
 iframe = AcceptUtils.create_iframe_url(
     iframe_id=iframe_id,
