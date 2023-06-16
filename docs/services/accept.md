@@ -24,10 +24,10 @@ Payment Flow for `Kiosk`, `Wallet`, `Cash` Payment
 flowchart TD
     A(Create Order) --> B(Create Payment Key)
     B --> C{Proceed}
-    C --> D[Kiosk]
-    C --> E[Wallet]
-    C --> F[Cash]
-    C --> G[Card Token]
+    C --> D[Kiosk Payment]
+    C --> E[Wallet Payment]
+    C --> F[Cash Payment]
+    C --> G[Card Token Payment]
 ```
 
 
