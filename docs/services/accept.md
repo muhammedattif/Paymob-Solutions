@@ -18,7 +18,7 @@ flowchart TD
     A(Create Order) --> B(Create Payment Key) --> C(Create IFrame)
 ```
 
-Payment Flow for `Kiosk`, `Wallet`, `Cash` Payment
+Payment Flow for `Kiosk`, `Wallet`, `Cash`, and `Card Token` Payment
 
 ```mermaid
 flowchart TD
