@@ -45,7 +45,7 @@ Each API Call retrieves a tuple which contains three values (Code, Data, Message
 **Successful API calls will return the following values:**
 
 - **Code**: [One of the Following Codes](#success-codes)
-- **Data**: `dict` or `list` (Depending on the API response)
+- **Data**: `dict`, `list`, or `object` (Depending on the API response)
 - **Message**: Success meesage (Varies depending on what the API done)
 
 **Unsuccessful API calls will return the following values:**
@@ -71,15 +71,25 @@ Each API Call retrieves a tuple which contains three values (Code, Data, Message
 | `UNHANDLED_EXCEPTION` | `23` | Unhandled Exception [comment]: # Trace Error will be provided in the [message](#message) |
 
 
-You can import these code from 
+You can import these codes from 
 ```python
-from paymob.accept.response_codes import SUCCESS, JSON_DECODE_EXCEPTION, REQUEST_EXCEPTION, HTTP_EXCEPTION, UNHANDLED_EXCEPTION
+from paymob.accept.response_codes import (
+    SUCCESS, 
+    JSON_DECODE_EXCEPTION, 
+    REQUEST_EXCEPTION, 
+    HTTP_EXCEPTION, 
+    UNHANDLED_EXCEPTION
+)
 ```
 
 # Settings
 
-You can customized some behaves of `Paymob` by following settings in `.env` file.
+You can customized some behaves of `Paymob` by adding the following settings in `.env` file.
 
 **- ACCEPT_APIS_TIMEOUT_SECONDES**
 
 Sets Timeout for API Calls (The connect timeout is the number of seconds Requests will wait for your client to establish a connection or read data with/from `Paymob` server)
+
+**- VALIDATE_API_RESPONSE** (Not Added Yet)
+
+Automatically validates the returned data of the APIs to ensure that there are no changed keys or data types
