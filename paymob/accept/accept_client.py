@@ -247,13 +247,13 @@ class AcceptAPIClient:
     def proceed_card_token_payment(
         self,
         payment_key: str,
-        identifier: str,
+        card_token: str,
     ) -> Tuple[str, Dict[str, Any], Union[str, None]]:
         """Proceed With Saved Card Payment
 
         Args:
             payment_key (str): Obtained Payment Key
-            identifier (str): Card Token
+            card_token (str): Saved Card Token
 
         Returns:
             Tuple[str, Dict[str, Any], Union[str, None]]: (Code, Payment Data Dict, Success/Error Message)
@@ -261,7 +261,7 @@ class AcceptAPIClient:
 
         request_body = {
             "source": {
-                "identifier": identifier,
+                "identifier": card_token,
                 "subtype": PaymentSubTypes.TOKEN,
             },
             "payment_token": payment_key,
@@ -372,14 +372,14 @@ class AcceptAPIClient:
     def get_transaction(
         self,
         transaction_id: str,
-    ) -> Tuple[str, Dict[str, Any], Union[str, None]]:
+    ) -> Tuple[str, Union[AcceptTransaction, None], Union[str, None]]:
         """Retrieves Transaction Data by Transaction ID
 
         Args:
             transaction_id (str): Paymob's Transaction ID
 
         Returns:
-            Tuple[str, Dict[str, Any], Union[str, None]]: (Code, Transaction Data Dict, Success/Error Message)
+            Tuple[str, Union[AcceptTransaction, None], Union[str, None]]: (Code, AcceptTransaction Instance, Success/Error Message)
         """
 
         code, transaction_data, message = self.connection.get(
@@ -403,7 +403,7 @@ class AcceptAPIClient:
         self,
         merchant_order_id: str = None,
         order_id: str = None,
-    ) -> Tuple[str, Dict[str, Any], Union[str, None]]:
+    ) -> Tuple[str, Union[AcceptTransaction, None], Union[str, None]]:
         """Retrieves Transaction Data by Merchant Order ID and Order ID
 
         Args:
@@ -413,7 +413,7 @@ class AcceptAPIClient:
         Note: Either merchant order_id or order_id must be passed
 
         Returns:
-            Tuple[str, Dict[str, Any], Union[str, None]]: (Code, Transaction Data Dict, Success/Error Message)
+            Tuple[str, Union[AcceptTransaction, None], Union[str, None]]: (Code, AcceptTransaction Instance, Success/Error Message)
         """
 
         request_body = {}

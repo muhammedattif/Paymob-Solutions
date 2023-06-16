@@ -188,6 +188,61 @@ code, payment_data, message = accept_api_client.proceed_kiosk_payment(
 | --- | --- | --- |
 | `payment_key` | `Yes` | Payment Key obtained from [Create Payment Key](#create-payment-key) |
 
+
+## CASH Payment
+
+After creating the payment key, you may need to processed to `Cash` payment, so you need to use the following API
+
+**Example**
+
+```python
+from paymob.accept import AcceptAPIClient
+
+accept_api_client = AcceptAPIClient()
+
+payment_key = "<Payment Key>"
+code, payment_data, message = accept_api_client.proceed_cash_payment(
+    payment_key=payment_key,
+)
+```
+
+**Parameters**
+
+| Parameter | Required? | Description |
+| --- | --- | --- |
+| `payment_key` | `Yes` | Payment Key obtained from [Create Payment Key](#create-payment-key) |
+
+
+## Card Token Payment
+
+Prerequisites:
+
+Please ask your technical contact for a recurring payment setup, you should receive extra integration ID in your dashboard.
+
+Now you've received your customer's card token, in order to perform recurring payments with this token, use the following API:
+
+**Example**
+
+```python
+from paymob.accept import AcceptAPIClient
+
+accept_api_client = AcceptAPIClient()
+
+payment_key = "<Payment Key>"
+code, payment_data, message = accept_api_client.proceed_card_token_payment(
+    payment_key=payment_key,
+    card_token=card_token
+)
+```
+
+**Parameters**
+
+| Parameter | Required? | Description |
+| --- | --- | --- |
+| `payment_key` | `Yes` | Payment Key obtained from [Create Payment Key](#create-payment-key) |
+| `card_token` | `Yes` | Saved Card Token |
+
+
 ---
 
 # HMAC Validation
@@ -195,27 +250,26 @@ code, payment_data, message = accept_api_client.proceed_kiosk_payment(
 Accept callbacks rely on HMAC authentication to verify Accept's identity and integrity of its data.
 Every and each callback invoked from Accept's server-side has its own HMAC validation.
 
-So, to authenticate the incoming HMAC all you've to do is to use the utility method `validate_processed_hmac`
-it will automatically calculates the HMAC from the Callback Dict and then compares the calculated one againest incoming HMAC, it will return `True` if the HMAC is verified, otherwise it will return `False`.
+So, to authenticate the incoming HMAC all you've to do is to initialize an `HMAC` object and pass `incoming_hmac` and `callback_dict`, it will automatically calculates the HMAC from the Callback Dict and then compares the calculated one againest incoming HMAC, it will return `True` if the HMAC is verified, otherwise it will return `False`.
 
 **Example**
 
 ```python
-from paymob.accept.utils import AcceptUtils
+from paymob.accept import HMACValidator
 
 incoming_hmac = "<Incoming HMAC sent in query params>"
 callback_dict = "<Incoming Callback Dict>"
-is_valid = AcceptUtils.validate_processed_hmac(
-    incoming_hmac=payment_key,
-    callback_dict=callback_dict
+hmac_validator = HMACValidator(incoming_hmac=payment_key, callback_dict=callback_dict
+hmac_validator.is_valid # Returns True or False
 )
 ```
 
 **Parameters**
 
-| Parameter | Required? | Default | Description |
-| --- | --- | --- | --- |
-| `payment_key` | `Yes` | - | Payment Key obtained from [Create Payment Key](#create-payment-key) |
+| Parameter | Required? | Description |
+| --- | --- | --- |
+| `incoming_hmac` | `Yes` | HMAC Sent in the Callback Query Params |
+| `callback_dict` | `Yes` | Request Body |
 
 
 ---
