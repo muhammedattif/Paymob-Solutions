@@ -3,17 +3,12 @@ from typing import Any, Dict, List, Tuple, Union
 
 # Other Third Party Imports
 from multimethod import overload
-from munch import Munch
-from pydantic import ValidationError
-
-# First Party Imports
-from paymob.utils import ClassUtils
 
 from .accept_connection import AcceptConnection
-from .accept_transaction import AcceptTransaction
+from .accept_transaction import Transaction
 from .config import URLsConfig
+from .constants import PaymentSubTypes
 from .response_codes import SUCCESS
-from .utils import PaymentSubTypes
 
 
 class AcceptAPIClient:
@@ -371,15 +366,15 @@ class AcceptAPIClient:
     @overload
     def get_transaction(
         self,
-        transaction_id: str,
-    ) -> Tuple[str, Union[AcceptTransaction, None], Union[str, None]]:
+        transaction_id: int,
+    ) -> Tuple[str, Union[Transaction, None], Union[str, None]]:
         """Retrieves Transaction Data by Transaction ID
 
         Args:
-            transaction_id (str): Paymob's Transaction ID
+            transaction_id (int): Paymob's Transaction ID
 
         Returns:
-            Tuple[str, Union[AcceptTransaction, None], Union[str, None]]: (Code, AcceptTransaction Instance, Success/Error Message)
+            Tuple[str, Union[Transaction, None], Union[str, None]]: (Code, Transaction Instance, Success/Error Message)
         """
 
         code, transaction_data, message = self.connection.get(
@@ -388,13 +383,7 @@ class AcceptAPIClient:
         # TODO: Validates APIs Return Data Option
         transaction_instance = None
         if code == SUCCESS:
-            try:
-                transaction_instance = AcceptTransaction(connection=self.connection, **transaction_data)
-            # TODO: To be controlled from settings
-            except ValidationError:
-                transaction_instance = Munch.fromDict(transaction_data)
-                transaction_instance.connection = self.connection
-                transaction_instance = ClassUtils.set_callables(old_cls=AcceptTransaction, new_cls=transaction_instance)
+            transaction_instance = Transaction(connection=self.connection, **transaction_data)
             message = "Transaction: {0} Retrieved Successfully".format(transaction_instance.id)
         return code, transaction_instance, message
 
@@ -402,18 +391,18 @@ class AcceptAPIClient:
     def get_transaction(
         self,
         merchant_order_id: str = None,
-        order_id: str = None,
-    ) -> Tuple[str, Union[AcceptTransaction, None], Union[str, None]]:
+        order_id: int = None,
+    ) -> Tuple[str, Union[Transaction, None], Union[str, None]]:
         """Retrieves Transaction Data by Merchant Order ID and Order ID
 
         Args:
             merchant_order_id (str): Internal Order ID. Defaults to None.
-            order_id (Union[int, str]): Paymob's External Order ID. Defaults to None.
+            order_id (int): Paymob's External Order ID. Defaults to None.
 
         Note: Either merchant order_id or order_id must be passed
 
         Returns:
-            Tuple[str, Union[AcceptTransaction, None], Union[str, None]]: (Code, AcceptTransaction Instance, Success/Error Message)
+            Tuple[str, Union[Transaction, None], Union[str, None]]: (Code, Transaction Instance, Success/Error Message)
         """
 
         request_body = {}
@@ -430,13 +419,7 @@ class AcceptAPIClient:
         # TODO: Validates APIs Return Data Option
         transaction_instance = None
         if code == SUCCESS:
-            try:
-                transaction_instance = AcceptTransaction(connection=self.connection, **transaction_data)
-            # TODO: To be controlled from settings
-            except ValidationError:
-                transaction_instance = Munch.fromDict(transaction_data)
-                transaction_instance.connection = self.connection
-                transaction_instance = ClassUtils.set_callables(old_cls=AcceptTransaction, new_cls=transaction_instance)
+            transaction_instance = Transaction(connection=self.connection, **transaction_data)
             message = "Transaction: {0} of Order ID: {1} and Merchant Order ID: {2} Retrieved Successfully".format(
                 transaction_instance.id,
                 order_id,

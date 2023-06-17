@@ -5,19 +5,6 @@ from typing import Tuple, Union
 from .config import URLsConfig
 
 
-class AcceptCallbackTypes:
-    TRANSACTION = "TRANSACTION"
-    CARD_TOKEN = "TOKEN"
-    DELIVERY_STATUS = "DELIVERY_STATUS"
-
-
-class PaymentSubTypes:
-    AGGREGATOR = "AGGREGATOR"
-    WALLET = "WALLET"
-    CASH = "CASH"
-    TOKEN = "TOKEN"
-
-
 class AcceptUtils:
     @staticmethod
     def generate_merchant_order_id(mid_key: str, identifier: int):

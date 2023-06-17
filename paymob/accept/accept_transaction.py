@@ -1,13 +1,28 @@
+# Future Imports
+from __future__ import annotations
+
 # Python Standard Library Imports
-from typing import Any, Dict, Tuple, Union
+from typing import Tuple, Union
+
+# First Party Imports
+from paymob.utils import ClassFactory
 
 from .accept_connection import AcceptConnection
 from .config import URLsConfig
 from .data_classes import TransactionDataClass
 from .response_codes import SUCCESS
 
+DynamicTransaction = ClassFactory("Transaction")
 
-class AcceptTransaction(TransactionDataClass):
+# TODO: Allow it to return DynamicTransaction or TransactionDataClass once Validation settings is supported
+AbstractTransaction = (
+    DynamicTransaction or TransactionDataClass
+)  # NOTE: It will always return DynamicTransaction for Now
+
+
+class Transaction(AbstractTransaction):
+    """Final Transaction Class"""
+
     def __init__(self, connection: AcceptConnection, *args, **kwargs) -> None:
         """Initializing Transaction Attributes
 
@@ -17,21 +32,26 @@ class AcceptTransaction(TransactionDataClass):
         super().__init__(*args, **kwargs)
         self.connection = connection
 
+    def __str__(self) -> str:
+        if hasattr(self, "id"):
+            return f"Transaction No: {self.id}"
+        return self.__repr__()
+
     def refund(
         self,
         amount_cents: int,
-    ) -> Tuple[str, Dict[str, Any], Union[str, None]]:
+    ) -> Tuple[str, Union[Transaction, None], Union[str, None]]:
         """Refund a Transaction
 
         Args:
             amount_cents (int): Amount that will be Refunded
 
         Returns:
-            Tuple[str, Dict[str, Any], Union[str, None]]: (Code, Transaction Data Dict, Success/Error Message)
+            Tuple[str, Union[Transaction, None], Union[str, None]]: (Code, Transaction Instance, Success/Error Message)
         """
 
         request_body = {
-            "transaction_id": self.obj.id,
+            "transaction_id": self.id,
             "amount_cents": amount_cents,
         }
 
@@ -41,23 +61,25 @@ class AcceptTransaction(TransactionDataClass):
         )
 
         # TODO: Validates APIs Return Data Option
+        transaction_instance = None
         if code == SUCCESS:
+            transaction_instance = Transaction(connection=self.connection, **transaction_data)
             message = "Transaction: {0} Refund Processed Successfully".format(
-                self.obj.id,
+                self.id,
             )
-        return code, transaction_data, message
+        return code, transaction_instance, message
 
     def void(
         self,
-    ) -> Tuple[str, Dict[str, Any], Union[str, None]]:
+    ) -> Tuple[str, Union[Transaction, None], Union[str, None]]:
         """Void a Transaction
 
         Returns:
-            Tuple[str, Dict[str, Any], Union[str, None]]: (Code, Transaction Data Dict, Success/Error Message)
+            Tuple[str, Union[Transaction, None], Union[str, None]]: (Code, Transaction Instance, Success/Error Message)
         """
 
         request_body = {
-            "transaction_id": self.obj.id,
+            "transaction_id": self.id,
         }
 
         code, transaction_data, message = self.connection.post(
@@ -66,27 +88,29 @@ class AcceptTransaction(TransactionDataClass):
         )
 
         # TODO: Validates APIs Return Data Option
+        transaction_instance = None
         if code == SUCCESS:
+            transaction_instance = Transaction(connection=self.connection, **transaction_data)
             message = "Transaction: {0} Void Processed Successfully".format(
-                self.obj.id,
+                self.id,
             )
-        return code, transaction_data, message
+        return code, transaction_instance, message
 
     def capture(
         self,
         amount_cents: int,
-    ) -> Tuple[str, Dict[str, Any], Union[str, None]]:
+    ) -> Tuple[str, Union[Transaction, None], Union[str, None]]:
         """Capture a Transaction
 
         Args:
             amount_cents (int): Amount that will be Captured
 
         Returns:
-            Tuple[str, Dict[str, Any], Union[str, None]]: (Code, Transaction Data Dict, Success/Error Message)
+            Tuple[str, Union[Transaction, None], Union[str, None]]: (Code, Transaction Instance, Success/Error Message)
         """
 
         request_body = {
-            "transaction_id": self.obj.id,
+            "transaction_id": self.id,
             "amount_cents": amount_cents,
         }
 
@@ -96,8 +120,10 @@ class AcceptTransaction(TransactionDataClass):
         )
 
         # TODO: Validates APIs Return Data Option
+        transaction_instance = None
         if code == SUCCESS:
+            transaction_instance = Transaction(connection=self.connection, **transaction_data)
             message = "Transaction: {0} Capture Processed Successfully".format(
-                self.obj.id,
+                self.id,
             )
-        return code, transaction_data, message
+        return code, transaction_instance, message

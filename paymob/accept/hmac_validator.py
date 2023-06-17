@@ -4,7 +4,7 @@ import hmac
 from typing import Any, Dict
 
 from .config import Credentials
-from .utils import AcceptCallbackTypes
+from .constants import AcceptCallbackTypes
 
 
 class HMACValidator:
