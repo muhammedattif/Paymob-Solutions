@@ -197,6 +197,33 @@ class TestHMACValidator(AbstractTestCase):
 
     # ======== End SetUpClass ========
 
+    # ========= Start __init__ Tests =========
+
+    def test___init__callback_dict_is_not_dict(self):
+        """test __init__: callback_dict is not of type dict"""
+
+        callback_dict = "invalid"
+        hmac = HMACValidator(
+            incoming_hmac=self.valid_incoming_hmac,
+            callback_dict=callback_dict,
+        )
+        self.assertNoHasAttr(hmac, "callback_obj_dict")
+        self.assertEqual(hmac.callback_dict, callback_dict)
+
+    def test___init__success(self):
+        """test __init__: Success"""
+
+        callback_obj_dict = {"id": 1}
+        callback_dict = {"obj": callback_obj_dict}
+        hmac = HMACValidator(
+            incoming_hmac=self.valid_incoming_hmac,
+            callback_dict=callback_dict,
+        )
+        self.assertEqual(hmac.callback_obj_dict, callback_obj_dict)
+        self.assertEqual(hmac.callback_dict, callback_dict)
+
+    # ========= End __init__ Tests =========
+
     # ========= Start is_valid Tests =========
     # Test cases to verify the behavior of the is_valid method for a Transaction/CardToken/DeliveryStatus callbacks.
 

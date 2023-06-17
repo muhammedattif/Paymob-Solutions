@@ -17,3 +17,9 @@ class AbstractTestCase:
 
     def assertFalse(self, variable):
         assert variable is False
+
+    def assertHasAttr(self, obj, attr):
+        assert hasattr(obj, attr) is True
+
+    def assertNoHasAttr(self, obj, attr):
+        assert hasattr(obj, attr) is not True
