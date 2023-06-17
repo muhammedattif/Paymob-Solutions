@@ -4,20 +4,16 @@ from __future__ import annotations
 # Python Standard Library Imports
 from typing import Tuple, Union
 
-# First Party Imports
-from paymob.utils import ClassFactory
-
 from .accept_connection import AcceptConnection
 from .config import URLsConfig
 from .data_classes import TransactionDataClass
+from .factories import DynamicTransactionFactory
 from .response_codes import SUCCESS
 
-DynamicTransaction = ClassFactory("Transaction")
-
-# TODO: Allow it to return DynamicTransaction or TransactionDataClass once Validation settings is supported
+# TODO: Allow it to return DynamicTransactionFactory or TransactionDataClass once Validation settings is supported
 AbstractTransaction = (
-    DynamicTransaction or TransactionDataClass
-)  # NOTE: It will always return DynamicTransaction for Now
+    DynamicTransactionFactory or TransactionDataClass
+)  # NOTE: It will always return DynamicTransactionFactory for Now
 
 
 class Transaction(AbstractTransaction):

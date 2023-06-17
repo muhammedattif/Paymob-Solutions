@@ -4,10 +4,14 @@ from typing import Any, Dict, List, Tuple, Union
 # Other Third Party Imports
 from multimethod import overload
 
+# First Party Imports
+from paymob.data_classes import ResponseFeedBack
+
 from .accept_connection import AcceptConnection
 from .accept_transaction import Transaction
 from .config import URLsConfig
 from .constants import PaymentSubTypes
+from .factories import Invoice, Order, Product
 from .response_codes import SUCCESS
 
 
@@ -34,7 +38,7 @@ class AcceptAPIClient:
         items: list = [],
         shipping_data: dict = {},
         shipping_details: dict = {},
-    ) -> Tuple[str, Dict[str, Any], Union[str, None]]:
+    ) -> Tuple[str, Union[Order, None], ResponseFeedBack]:
         """Register an order to Accept's database
 
         Args:
@@ -48,9 +52,8 @@ class AcceptAPIClient:
 
 
         Returns:
-            Tuple[str, Dict[str, Any], Union[str, None]]: (Code, Order Data Dict, Success/Error Message)
+            Tuple[str, Union[Order, None], ResponseFeedBack]: (Code, Order Insatnce, ResponseFeedBack Instance)
         """
-
         request_body = {
             "merchant_order_id": merchant_order_id,
             "amount_cents": str(amount_cents),
@@ -61,37 +64,41 @@ class AcceptAPIClient:
             "shipping_details": shipping_details,
         }
 
-        code, order_data, message = self.connection.post(
+        code, order_data, feedback = self.connection.post(
             url=URLsConfig.CREATE_ORDER,
             json=request_body,
         )
 
         # TODO: Validates APIs Return Data Option
+        order_instance = None
         if code == SUCCESS:
-            message = "Order Created Successfully"
-        return code, order_data, message
+            order_instance = Order(**order_data)
+            feedback.message = "Order Created Successfully"
+        return code, order_instance, feedback
 
     def get_order(
         self,
         order_id: Union[int, str],
-    ) -> Tuple[str, Dict[str, Any], Union[str, None]]:
+    ) -> Tuple[str, Union[Order, None], Union[str, None]]:
         """Retrives Order Data
 
         Args:
             order_id (Union[int, str]): Paymob's External Order ID
 
         Returns:
-            Tuple[str, Dict[str, Any], Union[str, None]]: (Code, Order Data Dict, Success/Error Message)
+            Tuple[str, Union[Order, None], ResponseFeedBack]: (Code, Order Instance, ResponseFeedBack Instance)
         """
 
-        code, order_data, message = self.connection.get(
+        code, order_data, feedback = self.connection.get(
             url=URLsConfig.GET_ORDER.format(order_id=order_id),
         )
 
         # TODO: Validates APIs Return Data Option
+        order_instance = None
         if code == SUCCESS:
-            message = "Successfully Retrieved Order: {0} Data: {0}".format(order_id)
-        return code, order_data, message
+            order_instance = Order(**order_data)
+            feedback.message = "Successfully Retrieved Order: {0} Data: {0}".format(order_id)
+        return code, order_instance, feedback
 
     def create_payment_key(
         self,
@@ -103,7 +110,7 @@ class AcceptAPIClient:
         card_token_key: str = None,
         expiration: int = 3600,  # 1 Hour
         lock_order_when_paid: bool = False,
-    ) -> Tuple[str, Union[str, None], Union[str, None]]:
+    ) -> Tuple[str, str, ResponseFeedBack]:
         """Create Payment Key
 
         Args:
@@ -117,7 +124,7 @@ class AcceptAPIClient:
             lock_order_when_paid (bool, optional): A flag prevent this order to be paid again if it is paid. Defaults to False.
 
         Returns:
-            Tuple[str, Union[str, None], Union[str, None]]: (Code, Payment Key, Success/Error Message)
+            Tuple[str, str, ResponseFeedBack]: (Code, Payment Key, ResponseFeedBack Instance)
         """
 
         request_body = {
@@ -132,7 +139,7 @@ class AcceptAPIClient:
         if card_token_key:
             request_body["token"] = card_token_key
 
-        code, data, message = self.connection.post(
+        code, data, feedback = self.connection.post(
             url=URLsConfig.PAYMENT_KEY,
             json=request_body,
         )
@@ -140,21 +147,21 @@ class AcceptAPIClient:
         # TODO: Validates APIs Return Data Option
         payment_key = None
         if code == SUCCESS:
-            message = "Payment Key Created Successfully"
+            feedback.message = "Payment Key Created Successfully"
             payment_key = data.get("token")
-        return code, payment_key, message
+        return code, payment_key, feedback
 
     def proceed_kiosk_payment(
         self,
         payment_key: str,
-    ) -> Tuple[str, Dict[str, Any], Union[str, None]]:
+    ) -> Tuple[str, Union[Transaction, None], ResponseFeedBack]:
         """Proceed Kiosk Payment
 
         Args:
             payment_key (str): Obtained Payment Key
 
         Returns:
-            Tuple[str, Dict[str, Any], Union[str, None]]: (Code, Payment Data Dict, Success/Error Message)
+            Tuple[str, Union[Transaction, None], ResponseFeedBack]: (Code, Payment Data Dict, ResponseFeedBack Instance)
         """
 
         request_body = {
@@ -165,21 +172,23 @@ class AcceptAPIClient:
             "payment_token": payment_key,
         }
 
-        code, payment_data, message = self.connection.post(
+        code, transaction_data, feedback = self.connection.post(
             url=URLsConfig.PAY,
             json=request_body,
         )
 
         # TODO: Validates APIs Return Data Option
+        transaction_instance = None
         if code == SUCCESS:
-            message = "Kiosk Payment Processed Successfully"
-        return code, payment_data, message
+            transaction_instance = Transaction(connection=self.connection, **transaction_data)
+            feedback.message = "Kiosk Payment Processed Successfully"
+        return code, transaction_instance, feedback
 
     def proceed_wallet_payment(
         self,
         payment_key: str,
         identifier: str,
-    ) -> Tuple[str, Dict[str, Any], Union[str, None]]:
+    ) -> Tuple[str, Union[Transaction, None], ResponseFeedBack]:
         """Proceed Wallet Payment
 
         Args:
@@ -187,7 +196,7 @@ class AcceptAPIClient:
             identifier (str): Wallet Number or AGGREGATOR for Kiosk Payment
 
         Returns:
-            Tuple[str, Dict[str, Any], Union[str, None]]: (Code, Payment Data Dict, Success/Error Message)
+            Tuple[str, Union[Transaction, None], ResponseFeedBack]: (Code, Payment Data Dict, ResponseFeedBack Instance)
         """
 
         request_body = {
@@ -198,27 +207,29 @@ class AcceptAPIClient:
             "payment_token": payment_key,
         }
 
-        code, payment_data, message = self.connection.post(
+        code, transaction_data, feedback = self.connection.post(
             url=URLsConfig.PAY,
             json=request_body,
         )
 
         # TODO: Validates APIs Return Data Option
+        transaction_instance = None
         if code == SUCCESS:
-            message = "Wallet Payment Processed Successfully"
-        return code, payment_data, message
+            transaction_instance = Transaction(connection=self.connection, **transaction_data)
+            feedback.message = "Wallet Payment Processed Successfully"
+        return code, transaction_instance, feedback
 
     def proceed_cash_payment(
         self,
         payment_key: str,
-    ) -> Tuple[str, Dict[str, Any], Union[str, None]]:
+    ) -> Tuple[str, Union[Transaction, None], ResponseFeedBack]:
         """Proceed Cash Payment
 
         Args:
             payment_key (str): Obtained Payment Key
 
         Returns:
-            Tuple[str, Dict[str, Any], Union[str, None]]: (Code, Payment Data Dict, Success/Error Message)
+            Tuple[str, Union[Transaction, None], ResponseFeedBack]: (Code, Payment Data Dict, ResponseFeedBack Instance)
         """
 
         request_body = {
@@ -229,21 +240,23 @@ class AcceptAPIClient:
             "payment_token": payment_key,
         }
 
-        code, payment_data, message = self.connection.post(
+        code, transaction_data, feedback = self.connection.post(
             url=URLsConfig.PAY,
             json=request_body,
         )
 
         # TODO: Validates APIs Return Data Option
+        transaction_instance = None
         if code == SUCCESS:
-            message = "Cash Payment Processed Successfully"
-        return code, payment_data, message
+            transaction_instance = Transaction(connection=self.connection, **transaction_data)
+            feedback.message = "Cash Payment Processed Successfully"
+        return code, transaction_instance, feedback
 
     def proceed_card_token_payment(
         self,
         payment_key: str,
         card_token: str,
-    ) -> Tuple[str, Dict[str, Any], Union[str, None]]:
+    ) -> Tuple[str, Union[Transaction, None], ResponseFeedBack]:
         """Proceed With Saved Card Payment
 
         Args:
@@ -251,7 +264,7 @@ class AcceptAPIClient:
             card_token (str): Saved Card Token
 
         Returns:
-            Tuple[str, Dict[str, Any], Union[str, None]]: (Code, Payment Data Dict, Success/Error Message)
+            Tuple[str, Union[Transaction, None], ResponseFeedBack]: (Code, Payment Data Dict, ResponseFeedBack Instance)
         """
 
         request_body = {
@@ -262,15 +275,17 @@ class AcceptAPIClient:
             "payment_token": payment_key,
         }
 
-        code, payment_data, message = self.connection.post(
+        code, transaction_data, feedback = self.connection.post(
             url=URLsConfig.PAY,
             json=request_body,
         )
 
         # TODO: Validates APIs Return Data Option
+        transaction_instance = None
         if code == SUCCESS:
-            message = "Payment With Saved Card Token Processed Successfully"
-        return code, payment_data, message
+            transaction_instance = Transaction(connection=self.connection, **transaction_data)
+            feedback.message = "Payment With Saved Card Token Processed Successfully"
+        return code, transaction_instance, feedback
 
     def create_invoice_link(
         self,
@@ -280,7 +295,7 @@ class AcceptAPIClient:
         currency: str,
         integrations: List[int],
         delivery_needed: bool = False,
-    ) -> Tuple[str, Dict[str, Any], Union[str, None]]:
+    ) -> Tuple[str, Union[Invoice, None], ResponseFeedBack]:
         """_summary_
 
         Args:
@@ -292,7 +307,7 @@ class AcceptAPIClient:
             delivery_needed (bool): Determines if you use our delivery. Defaults to False.
 
         Returns:
-            Tuple[str, Dict[str, Any], Union[str, None]]: (Code, Payment Data Dict, Success/Error Message)
+            Tuple[str, Union[Invoice, None], ResponseFeedBack]: (Code, Invoice Instance, ResponseFeedBack Instance)
         """
 
         request_body = {
@@ -305,15 +320,17 @@ class AcceptAPIClient:
             "delivery_needed": delivery_needed,
         }
 
-        code, invoice_link_data, message = self.connection.post(
+        code, invoice_data, feedback = self.connection.post(
             url=URLsConfig.CREATE_INVOICE_LINK,
             json=request_body,
         )
 
         # TODO: Validates APIs Return Data Option
+        invoice_instance = None
         if code == SUCCESS:
-            message = "Invoice Link Data Retrieved Successfully"
-        return code, invoice_link_data, message
+            invoice_instance = Invoice(**invoice_data)
+            feedback.message = "Invoice Link Data Retrieved Successfully"
+        return code, invoice_instance, feedback
 
     def create_product_link(
         self,
@@ -325,7 +342,7 @@ class AcceptAPIClient:
         integrations: List[int],
         allow_quantity_edit: bool,
         delivery_needed: bool = False,
-    ) -> Tuple[str, Dict[str, Any], Union[str, None]]:
+    ) -> Tuple[str, Union[Product, None], ResponseFeedBack]:
         """Creates a Product Link
 
         Args:
@@ -339,7 +356,7 @@ class AcceptAPIClient:
             delivery_needed (bool): Determines if you use our delivery. Defaults to False.
 
         Returns:
-            Tuple[str, Dict[str, Any], Union[str, None]]: (Code, Payment Data Dict, Success/Error Message)
+            Tuple[str, Union[Product, None], ResponseFeedBack]: (Code, Product Instance, ResponseFeedBack Instance)
         """
 
         request_body = {
@@ -353,46 +370,48 @@ class AcceptAPIClient:
             "delivery_needed": delivery_needed,
         }
 
-        code, product_link_data, message = self.connection.post(
+        code, product_data, feedback = self.connection.post(
             url=URLsConfig.CREATE_PRODUCT_LINK,
             json=request_body,
         )
 
         # TODO: Validates APIs Return Data Option
+        product_instance = None
         if code == SUCCESS:
-            message = "Product Link Data Retrieved Successfully"
-        return code, product_link_data, message
+            product_instance = Product(**product_data)
+            feedback.message = "Product Link Data Retrieved Successfully"
+        return code, product_instance, feedback
 
     @overload
     def get_transaction(
         self,
         transaction_id: int,
-    ) -> Tuple[str, Union[Transaction, None], Union[str, None]]:
+    ) -> Tuple[str, Union[Transaction, None], ResponseFeedBack]:
         """Retrieves Transaction Data by Transaction ID
 
         Args:
             transaction_id (int): Paymob's Transaction ID
 
         Returns:
-            Tuple[str, Union[Transaction, None], Union[str, None]]: (Code, Transaction Instance, Success/Error Message)
+            Tuple[str, Union[Transaction, None], ResponseFeedBack]: (Code, Transaction Instance, ResponseFeedBack Instance)
         """
 
-        code, transaction_data, message = self.connection.get(
+        code, transaction_data, feedback = self.connection.get(
             url=URLsConfig.GET_TRANSACTION_ID.format(transaction_id=transaction_id),
         )
         # TODO: Validates APIs Return Data Option
         transaction_instance = None
         if code == SUCCESS:
             transaction_instance = Transaction(connection=self.connection, **transaction_data)
-            message = "Transaction: {0} Retrieved Successfully".format(transaction_instance.id)
-        return code, transaction_instance, message
+            feedback.message = "Transaction: {0} Retrieved Successfully".format(transaction_instance.id)
+        return code, transaction_instance, feedback
 
     @overload
     def get_transaction(
         self,
         merchant_order_id: str = None,
         order_id: int = None,
-    ) -> Tuple[str, Union[Transaction, None], Union[str, None]]:
+    ) -> Tuple[str, Union[Transaction, None], ResponseFeedBack]:
         """Retrieves Transaction Data by Merchant Order ID and Order ID
 
         Args:
@@ -402,7 +421,7 @@ class AcceptAPIClient:
         Note: Either merchant order_id or order_id must be passed
 
         Returns:
-            Tuple[str, Union[Transaction, None], Union[str, None]]: (Code, Transaction Instance, Success/Error Message)
+            Tuple[str, Union[Transaction, None], ResponseFeedBack]: (Code, Transaction Instance, ResponseFeedBack Instance)
         """
 
         request_body = {}
@@ -411,7 +430,7 @@ class AcceptAPIClient:
         if order_id:
             request_body["order_id"] = order_id
 
-        code, transaction_data, message = self.connection.post(
+        code, transaction_data, feedback = self.connection.post(
             url=URLsConfig.GET_TRANSACTION_MERCHANT_ID,
             json=request_body,
         )
@@ -420,9 +439,11 @@ class AcceptAPIClient:
         transaction_instance = None
         if code == SUCCESS:
             transaction_instance = Transaction(connection=self.connection, **transaction_data)
-            message = "Transaction: {0} of Order ID: {1} and Merchant Order ID: {2} Retrieved Successfully".format(
-                transaction_instance.id,
-                order_id,
-                merchant_order_id,
+            feedback.message = (
+                "Transaction: {0} of Order ID: {1} and Merchant Order ID: {2} Retrieved Successfully".format(
+                    transaction_instance.id,
+                    order_id,
+                    merchant_order_id,
+                )
             )
-        return code, transaction_instance, message
+        return code, transaction_instance, feedback

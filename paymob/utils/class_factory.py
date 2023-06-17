@@ -7,6 +7,8 @@ class BaseClass(object):
 
 
 def ClassFactory(name, BaseClass=BaseClass):
+    name = "".join(element.capitalize() for element in name.split("_"))
+
     def _wrap(key, value):
         if isinstance(value, (tuple, list, set, frozenset)):
             return type(value)([_wrap(key, v) for v in value])
