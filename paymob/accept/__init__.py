@@ -1,4 +1,4 @@
 from .accept_client import AcceptAPIClient
 from .utils import AcceptUtils
 from .hmac_validator import HMACValidator
-from .accept_transaction import Transaction
+from .transaction import Transaction

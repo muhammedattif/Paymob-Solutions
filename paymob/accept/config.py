@@ -18,7 +18,7 @@ class URLsConfig:
     GET_ORDER = ACCEPT_BASE_URL + "/api/ecommerce/orders/{order_id}"
     PAYMENT_KEY = ACCEPT_BASE_URL + "/api/acceptance/payment_keys"
     PAY = ACCEPT_BASE_URL + "/api/acceptance/payments/pay"
-    IFRAME = ACCEPT_BASE_URL + "/api/acceptance/iframes/{iframe_id}?payment_token={payment_token}"
+    IFRAME = ACCEPT_BASE_URL + "/api/acceptance/iframes/{iframe_id}?payment_token={payment_key}"
     GET_TRANSACTION_ID = ACCEPT_BASE_URL + "/api/acceptance/transactions/{transaction_id}"
     GET_TRANSACTION_MERCHANT_ID = ACCEPT_BASE_URL + "/api/ecommerce/orders/transaction_inquiry"
     REFUND_TRANSACTION = ACCEPT_BASE_URL + "/api/acceptance/void_refund/refund"

@@ -4,8 +4,8 @@ from __future__ import annotations
 # Python Standard Library Imports
 from typing import Tuple, Union
 
-from .accept_connection import AcceptConnection
 from .config import URLsConfig
+from .connection import AcceptConnection
 from .data_classes import TransactionDataClass
 from .factories import DynamicTransactionFactory
 from .response_codes import SUCCESS

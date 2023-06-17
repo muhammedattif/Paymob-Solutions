@@ -7,12 +7,12 @@ from multimethod import overload
 # First Party Imports
 from paymob.data_classes import ResponseFeedBack
 
-from .accept_connection import AcceptConnection
-from .accept_transaction import Transaction
 from .config import URLsConfig
+from .connection import AcceptConnection
 from .constants import PaymentSubTypes
 from .factories import Invoice, Order, Product
 from .response_codes import SUCCESS
+from .transaction import Transaction
 
 
 class AcceptAPIClient:

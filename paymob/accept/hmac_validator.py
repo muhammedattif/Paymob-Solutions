@@ -21,7 +21,8 @@ class HMACValidator:
         """
         self.incoming_hmac = incoming_hmac
         self.callback_dict = callback_dict
-        self.callback_obj_dict = self.callback_dict.get("obj", {})
+        if isinstance(self.callback_dict, dict):
+            self.callback_obj_dict = self.callback_dict.get("obj", {})
 
     @staticmethod
     def _calculate_hmac(message: str) -> str:

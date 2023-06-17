@@ -53,7 +53,7 @@ class AcceptUtils:
         Returns:
             str: Full Iframe URL
         """
-        return URLsConfig.IFRAME_URL.format(
+        return URLsConfig.IFRAME.format(
             iframe_id=iframe_id,
-            payment_token=payment_key,
+            payment_key=payment_key,
         )

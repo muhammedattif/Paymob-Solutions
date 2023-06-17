@@ -30,7 +30,7 @@ Here are the main methods provided by the class:
 
 The class relies on other modules and classes for making API requests and handling responses.
 
-## `accept_connections.py`
+## `connections.py`
 defines a class called `AcceptConnection` that handles communication with Accept's APIs. It has methods for making HTTP GET and POST requests. The `get` method is a wrapper for `requests.get` and the `post` method is a wrapper for `requests.post`. These methods handle exceptions and return the response code, data, and success/error message. The class initializes a Requests session, retrieves an authentication token, and sets the necessary headers for the API requests. Overall, it provides a convenient way to interact with Accept's APIs by abstracting away the request logic and error handling.
 
 
