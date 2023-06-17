@@ -264,3 +264,135 @@ class TestHMACValidator(AbstractTestCase):
         self.assertTrue(mock_generate_delivery_status_processed_hmac.called)
 
     # ========= End is_valid Tests =========
+
+    # ========= Start _generate_processed_hmac Tests =========
+
+    @patch.object(HMACValidator, "_calculate_hmac")
+    def test_generate_processed_hmac_hmac_dict_is_not_dict(self, mock_calculate_hmac):
+        """test _generate_processed_hmac: hmac_dict is not of type dict"""
+
+        hmac = HMACValidator(
+            incoming_hmac=self.valid_incoming_hmac,
+            callback_dict=self.delivery_status_callback_dict,
+        )
+        actual_hmac_message = hmac._generate_processed_hmac(
+            hmac_dict="Invalid",
+        )
+        expected_hmac_message = ""
+        self.assertEqual(actual_hmac_message, expected_hmac_message)
+        self.assertFalse(mock_calculate_hmac.called)
+
+    @patch.object(HMACValidator, "_calculate_hmac")
+    def test_generate_processed_hmac_success(self, mock_calculate_hmac):
+        """test _generate_processed_hmac: Success"""
+
+        expected_hmac_message = "HMAC Message"
+        mock_calculate_hmac.return_value = expected_hmac_message
+
+        hmac = HMACValidator(
+            incoming_hmac=self.valid_incoming_hmac,
+            callback_dict=self.delivery_status_callback_dict,
+        )
+        actual_hmac_message = hmac._generate_processed_hmac(
+            hmac_dict={},
+        )
+        self.assertEqual(actual_hmac_message, expected_hmac_message)
+        self.assertTrue(mock_calculate_hmac.called)
+
+    # ========= End _generate_processed_hmac Tests =========
+
+    # ========= Start _generate_transaction_processed_hmac Tests =========
+
+    @patch.object(HMACValidator, "_generate_processed_hmac")
+    def test_generate_transaction_processed_hmac_invalid_callback_obj_dict(self, mock_generate_processed_hmac):
+        """test _generate_transaction_processed_hmac: Invalid callback_obj_dict"""
+
+        hmac = HMACValidator(
+            incoming_hmac=self.valid_incoming_hmac,
+            callback_dict={},
+        )
+        actual_hmac = hmac._generate_transaction_processed_hmac()
+        expected_hmac = ""
+        self.assertEqual(actual_hmac, expected_hmac)
+        self.assertFalse(mock_generate_processed_hmac.called)
+
+    @patch.object(HMACValidator, "_generate_processed_hmac")
+    def test_generate_transaction_processed_hmac_success(self, mock_generate_processed_hmac):
+        """test _generate_transaction_processed_hmac: Success"""
+
+        expected_hmac = "*****"
+        mock_generate_processed_hmac.return_value = expected_hmac
+
+        hmac = HMACValidator(
+            incoming_hmac=self.valid_incoming_hmac,
+            callback_dict=self.transaction_callback_dict,
+        )
+        actual_hmac = hmac._generate_transaction_processed_hmac()
+        self.assertEqual(actual_hmac, expected_hmac)
+        self.assertTrue(mock_generate_processed_hmac.called)
+
+    # ========= End _generate_transaction_processed_hmac Tests =========
+
+    # ========= Start _generate_card_token_processed_hmac Tests =========
+
+    @patch.object(HMACValidator, "_generate_processed_hmac")
+    def test_generate_card_token_processed_hmac_invalid_callback_obj_dict(self, mock_generate_processed_hmac):
+        """test _generate_card_token_processed_hmac: Invalid callback_obj_dict"""
+
+        hmac = HMACValidator(
+            incoming_hmac=self.valid_incoming_hmac,
+            callback_dict={},
+        )
+        actual_hmac = hmac._generate_card_token_processed_hmac()
+        expected_hmac = ""
+        self.assertEqual(actual_hmac, expected_hmac)
+        self.assertFalse(mock_generate_processed_hmac.called)
+
+    @patch.object(HMACValidator, "_generate_processed_hmac")
+    def test_generate_card_token_processed_hmac_hmac_success(self, mock_generate_processed_hmac):
+        """test _generate_card_token_processed_hmac: Success"""
+
+        expected_hmac = "*****"
+        mock_generate_processed_hmac.return_value = expected_hmac
+
+        hmac = HMACValidator(
+            incoming_hmac=self.valid_incoming_hmac,
+            callback_dict=self.card_token_callback_dict,
+        )
+        actual_hmac = hmac._generate_card_token_processed_hmac()
+        self.assertEqual(actual_hmac, expected_hmac)
+        self.assertTrue(mock_generate_processed_hmac.called)
+
+    # ========= End _generate_card_token_processed_hmac Tests =========
+
+    # ========= Start _generate_card_token_processed_hmac Tests =========
+
+    @patch.object(HMACValidator, "_generate_processed_hmac")
+    def test_generate_delivery_status_processed_hmac_invalid_callback_obj_dict(self, mock_generate_processed_hmac):
+        """test _generate_delivery_status_processed_hmac: Invalid callback_obj_dict"""
+
+        hmac = HMACValidator(
+            incoming_hmac=self.valid_incoming_hmac,
+            callback_dict={},
+        )
+        actual_hmac = hmac._generate_delivery_status_processed_hmac()
+        expected_hmac = ""
+        self.assertEqual(actual_hmac, expected_hmac)
+        self.assertFalse(mock_generate_processed_hmac.called)
+
+    @patch.object(HMACValidator, "_generate_processed_hmac")
+    def test_generate_delivery_status_processed_hmac_hmac_success(self, mock_generate_processed_hmac):
+        """test _generate_delivery_status_processed_hmac: Success"""
+
+        expected_hmac = "*****"
+        mock_generate_processed_hmac.return_value = expected_hmac
+
+        hmac = HMACValidator(
+            incoming_hmac=self.valid_incoming_hmac,
+            callback_dict=self.card_token_callback_dict,
+        )
+        actual_hmac = hmac._generate_delivery_status_processed_hmac()
+        self.assertEqual(actual_hmac, expected_hmac)
+        self.assertTrue(mock_generate_processed_hmac.called)
+
+    # ========= End _generate_delivery_status_processed_hmac Tests =========

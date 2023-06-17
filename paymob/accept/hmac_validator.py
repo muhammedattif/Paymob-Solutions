@@ -22,7 +22,7 @@ class HMACValidator:
         self.incoming_hmac = incoming_hmac
         self.callback_dict = callback_dict
         if isinstance(self.callback_dict, dict):
-            self.callback_obj_dict = self.callback_dict.get("obj", {})
+            self.callback_obj_dict = self.callback_dict.get("obj")
 
     @staticmethod
     def _calculate_hmac(message: str) -> str:
@@ -91,12 +91,12 @@ class HMACValidator:
             "is_refunded": self.callback_obj_dict.get("is_refunded"),
             "is_standalone_payment": self.callback_obj_dict.get("is_standalone_payment"),
             "is_voided": self.callback_obj_dict.get("is_voided"),
-            "order.id": self.callback_obj_dict.get("order").get("id"),
+            "order.id": self.callback_obj_dict.get("order", {}).get("id"),
             "owner": self.callback_obj_dict.get("owner"),
             "pending": self.callback_obj_dict.get("pending"),
-            "source_data.pan": self.callback_obj_dict.get("source_data").get("pan"),
-            "source_data.sub_type": self.callback_obj_dict.get("source_data").get("sub_type"),
-            "source_data.type": self.callback_obj_dict.get("source_data").get("type"),
+            "source_data.pan": self.callback_obj_dict.get("source_data", {}).get("pan"),
+            "source_data.sub_type": self.callback_obj_dict.get("source_data", {}).get("sub_type"),
+            "source_data.type": self.callback_obj_dict.get("source_data", {}).get("type"),
             "success": self.callback_obj_dict.get("success"),
         }
 
@@ -130,7 +130,7 @@ class HMACValidator:
         Returns:
             str: Generated HMAC
         """
-        if not isinstance(self.callback_self.callback_obj_dictt, dict):
+        if not isinstance(self.callback_obj_dict, dict):
             return ""
 
         hmac_dict = {
