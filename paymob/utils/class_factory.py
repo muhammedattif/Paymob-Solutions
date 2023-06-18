@@ -5,6 +5,11 @@ class BaseClass(object):
     def __init__(self, classtype):
         self._type = classtype
 
+    def __str__(self) -> str:
+        if hasattr(self, "id"):
+            return f"{self.__class__.__name__} No: {self.id}"
+        return self.__repr__()
+
 
 def ClassFactory(name, BaseClass=BaseClass):
     name = "".join(element.capitalize() for element in name.split("_"))

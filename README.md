@@ -53,7 +53,7 @@ Each API Call retrieves a tuple which contains three values (Code, An Object of 
     - `data`: `None`
     - `status_code`: `2xx`
 
-Example:
+**Example:**
 ```python
 from paymob.accept import AcceptAPIClient
 
@@ -91,7 +91,7 @@ Feedback Status Code: 200
     - `status_code`: `4xx` or `5xx`
 
 
-Example:
+**Example:**
 ```python
 from paymob.accept import AcceptAPIClient
 
@@ -155,7 +155,7 @@ You can customized some behaves of `Paymob` by adding the following settings in 
 
 Sets Timeout for API Calls (The connect timeout is the number of seconds Requests will wait for your client to establish a connection or read data with/from `Paymob` server)
 
-`Example`:
+**Example:**
 ```bash
 ACCEPT_APIS_TIMEOUT_SECONDES=20
 ```

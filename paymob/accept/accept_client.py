@@ -299,7 +299,7 @@ class AcceptAPIClient:
         """_summary_
 
         Args:
-            amount_cents (str): The price in cents of the product.
+            amount_cents (str): The amount in cents to be paid for in the invoice.
             shipping_data (Dict[str, Any]): The details of the customer or end-user.
             items (List[Dict[str, Any]]): It will include the details of the order.
             currency (str): The currency used in the invoice. By default, it will be EGP.
@@ -340,7 +340,7 @@ class AcceptAPIClient:
         currency: str,
         inventory: str,
         integrations: List[int],
-        allow_quantity_edit: bool,
+        allow_quantity_edit: bool = False,
         delivery_needed: bool = False,
     ) -> Tuple[str, Union[Product, None], ResponseFeedBack]:
         """Creates a Product Link
@@ -352,7 +352,7 @@ class AcceptAPIClient:
             currency (str): The currency used in the invoice. By default, it will be EGP.
             inventory (str): The stock of your product in your inventory.
             integrations (List[int]): The payment methods that will be listed in the invoice link. You should enter the integration ID of every payment method.
-            allow_quantity_edit (bool): If the stock will be reduced when a product is paid for.
+            allow_quantity_edit (bool): If the stock will be reduced when a product is paid for. Defaults to False.
             delivery_needed (bool): Determines if you use our delivery. Defaults to False.
 
         Returns:

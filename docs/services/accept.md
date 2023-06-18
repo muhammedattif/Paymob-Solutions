@@ -45,6 +45,9 @@ by initializing an object from `AcceptAPIClient` a TCP connection session is est
 
 ## - Create Order
 
+You will register an order to Accept's database, so that you can pay for it later using a transaction.
+Order ID will be the identifier that you will use to link the transaction(s) performed to your system, as one order can have more than one transaction.
+
 **Example**
 
 ```python
@@ -59,7 +62,7 @@ merchant_order_id = AcceptUtils.generate_merchant_order_id(mid_key=mid_key, iden
 amount_cents = 1000
 currency = "EGP"
 
-code, order_data, message = accept_api_client.create_order(
+code, order, feedback = accept_api_client.create_order(
     merchant_order_id=merchant_order_id,
     amount_cents=amount_cents,
     currency=currency
@@ -90,7 +93,7 @@ accept_api_client = AcceptAPIClient()
 
 order_id = "<Paymob Order Id>"
 integration_id = "<Your Integration ID>"
-code, order_data, message = accept_api_client.get_order(
+code, order, feedback = accept_api_client.get_order(
     order_id=order_id,
 )
 ```
@@ -104,6 +107,8 @@ code, order_data, message = accept_api_client.get_order(
 
 ## - Create Payment Key
 
+At this step, you will obtain a payment_key token. This key will be used to authenticate your payment request. It will be also used for verifying your transaction request metadata.
+
 **Example**
 
 ```python
@@ -116,13 +121,14 @@ amount_cents = 1000
 currency = "EGP"
 billing_data = {}
 integration_id = "<Your Integration ID>"
-code, payment_key, message = accept_api_client.create_payment_key(
+code, payment_key, feedback = accept_api_client.create_payment_key(
     order_id=order_id,
     amount_cents=amount_cents,
     currency=currency,
     billing_data=billing_data,
     integration_id=integration_id,
 )
+# NOTE: payment_key is str NOT Object like other APIs
 
 ```
 
@@ -153,11 +159,19 @@ accept_api_client = AcceptAPIClient()
 
 payment_key = "<Payment Key>"
 identifier = "<Wallet Mobile Number>"
-code, payment_data, message = accept_api_client.proceed_wallet_payment(
+code, transaction, feedback = accept_api_client.proceed_wallet_payment(
     payment_key=payment_key,
     identifier=identifier
 )
+print(f"Redirect URL: {transaction.redirect_url}")
 ```
+
+
+Output:
+```bash
+Redirect URL: https://accept.paymob.com/****
+```
+
 
 **Parameters**
 
@@ -179,9 +193,15 @@ from paymob.accept import AcceptAPIClient
 accept_api_client = AcceptAPIClient()
 
 payment_key = "<Payment Key>"
-code, payment_data, message = accept_api_client.proceed_kiosk_payment(
+code, transaction, feedback = accept_api_client.proceed_kiosk_payment(
     payment_key=payment_key,
 )
+print(f"Bill Reference: {transaction.data.bill_reference}")
+```
+
+Output:
+```bash
+Bill Reference: 123456789
 ```
 
 **Parameters**
@@ -203,7 +223,7 @@ from paymob.accept import AcceptAPIClient
 accept_api_client = AcceptAPIClient()
 
 payment_key = "<Payment Key>"
-code, payment_data, message = accept_api_client.proceed_cash_payment(
+code, transaction, feedback = accept_api_client.proceed_cash_payment(
     payment_key=payment_key,
 )
 ```
@@ -229,21 +249,120 @@ from paymob.accept import AcceptAPIClient
 accept_api_client = AcceptAPIClient()
 
 payment_key = "<Payment Key>"
-code, payment_data, message = accept_api_client.proceed_card_token_payment(
+code, transaction, feedback = accept_api_client.proceed_card_token_payment(
     payment_key=payment_key,
     card_token=card_token
 )
 ```
 
+## - Card Invoice Link
+
+Use this API in case you need to generate invoice links using an API instead of generating it from your Accept dashboard.
+
+**Example**
+
+```python
+from paymob.accept import AcceptAPIClient
+
+accept_api_client = AcceptAPIClient()
+
+amount_cents = "1000"
+shipping_data = {
+    "first_name":"Test",
+    "last_name":"Account",
+    "phone_number":"01010101010",
+    "email":"test@account.com"
+}
+items = [
+    {
+    "name":"ASC1525",
+    "amount_cents":"4000",
+    "quantity":"1",
+    "description":"Smart Watch"
+    }
+
+]
+currency = "EGP
+integrations = [11, 22, 33]
+code, invoice, feedback = accept_api_client.create_invoice_link(
+    amount_cents=amount_cents,
+    shipping_data=shipping_data,
+    items=items,
+    currency=currency,
+    integrations=integrations,
+)
+print(f"Invoice ID: {invoice.id}")
+print(f"Invlice URL: {invoice.url}")
+```
+
+**Output**:
+```bash
+Invoice ID: 1122
+Invlice URL: https://accept.paymob.com/****
+```
+
 **Parameters**
 
-| Parameter | Required? | Description |
-| --- | --- | --- |
-| `payment_key` | `Yes` | Payment Key obtained from [Create Payment Key](#create-payment-key) |
-| `card_token` | `Yes` | Saved Card Token |
+| Parameter | Required? | Default | Description |
+| --- | --- | --- | --- |
+| `amount_cents` | `Yes` | - | The amount in cents to be paid for in the invoice |
+| `shipping_data` | `Yes` | - | The details of the customer or end-user |
+| `items` | `Yes` | - | It will include the details of the order. |
+| `currency` | `Yes` | - | The currency used in the invoice. By default, it will be EGP. |
+| `integrations` | `Yes` | - | The payment methods that will be listed in the invoice link. You should enter the integration ID of every payment method |
+| `delivery_needed` | `No` | `False` | Determines if you use our delivery. By default, it will be "false" |
 
+
+
+## - Card Product Link
+
+Use this API in case you need to generate product links using an API instead of generating it from your Accept dashboard.
+
+**Example**
+
+```python
+from paymob.accept import AcceptAPIClient
+
+accept_api_client = AcceptAPIClient()
+
+product_name = "iPhone"
+product_description = "Description"
+amount_cents = "1000"
+currency = "EGP
+integrations = [11, 22, 33]
+inventory = "1"
+code, product, feedback = accept_api_client.create_product_link(
+    product_name=product_name,
+    product_description=product_description,
+    amount_cents=amount_cents,
+    currency=currency,
+    inventory=inventory,
+    integrations=integrations,
+)
+print(f"Product ID: {product.id}")
+print(f"Product URL: {product.product_url}")
+```
+
+**Output**:
+```bash
+Product ID: 1122
+Product URL: https://accept.paymob.com/****
+```
+
+**Parameters**
+
+| Parameter | Required? | Default | Description |
+| --- | --- | --- | --- |
+| `product_name` | `Yes` | - | The name of your product |
+| `product_description` | `Yes` | - | The description of your product |
+| `amount_cents` | `Yes` | - | The amount in cents to be paid for in the product |
+| `currency` | `Yes` | - | The currency used in the product. By default, it will be EGP. |
+| `integrations` | `Yes` | - | The payment methods that will be listed in the product link. You should enter the integration ID of every payment method |
+| `allow_quantity_edit` | `No` | `False` | If the stock will be reduced when a product is paid for |
+| `delivery_needed` | `No` | `False` | Determines if you use our delivery. By default, it will be "false" |
 
 ---
+
 
 # HMAC Validation
 
