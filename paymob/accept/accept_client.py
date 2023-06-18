@@ -73,7 +73,7 @@ class AcceptAPIClient:
         order_instance = None
         if code == SUCCESS:
             order_instance = Order(**order_data)
-            feedback.message = "Order Created Successfully"
+            feedback.message = "Order with ID: {0} Created Successfully".format(order_instance.id)
         return code, order_instance, feedback
 
     def get_order(
@@ -97,7 +97,7 @@ class AcceptAPIClient:
         order_instance = None
         if code == SUCCESS:
             order_instance = Order(**order_data)
-            feedback.message = "Successfully Retrieved Order: {0} Data: {0}".format(order_id)
+            feedback.message = "Successfully Retrieved Order: {0}".format(order_id)
         return code, order_instance, feedback
 
     def create_payment_key(
@@ -147,7 +147,7 @@ class AcceptAPIClient:
         # TODO: Validates APIs Return Data Option
         payment_key = None
         if code == SUCCESS:
-            feedback.message = "Payment Key Created Successfully"
+            feedback.message = "Payment Key for Order: {0} Created Successfully".format(order_id)
             payment_key = data.get("token")
         return code, payment_key, feedback
 
@@ -216,7 +216,7 @@ class AcceptAPIClient:
         transaction_instance = None
         if code == SUCCESS:
             transaction_instance = Transaction(connection=self.connection, **transaction_data)
-            feedback.message = "Wallet Payment Processed Successfully"
+            feedback.message = "Wallet Payment for Identifier: {0} Processed Successfully".format(identifier)
         return code, transaction_instance, feedback
 
     def proceed_cash_payment(
