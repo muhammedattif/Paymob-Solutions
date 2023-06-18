@@ -8,11 +8,7 @@ from .constants import AcceptCallbackTypes
 
 
 class HMACValidator:
-    def __init__(
-        self,
-        incoming_hmac: str,
-        callback_dict: Dict[str, Any],
-    ) -> None:
+    def __init__(self, incoming_hmac: str, callback_dict: Dict[str, Any], **kwargs) -> None:
         """Initialize HMAC Attributes
 
         Args:
@@ -23,6 +19,8 @@ class HMACValidator:
         self.callback_dict = callback_dict
         if isinstance(self.callback_dict, dict):
             self.callback_obj_dict = self.callback_dict.get("obj")
+
+        super().__init__(**kwargs)
 
     @staticmethod
     def _calculate_hmac(message: str) -> str:

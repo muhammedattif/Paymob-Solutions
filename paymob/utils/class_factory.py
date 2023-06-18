@@ -12,7 +12,9 @@ class BaseClass(object):
 
 
 def ClassFactory(name, BaseClass=BaseClass):
-    name = "".join(element.capitalize() for element in name.split("_"))
+    splitted_name = name.split("_")
+    if len(splitted_name) > 1:
+        name = "".join(element.capitalize() for element in splitted_name)
 
     def _wrap(key, value):
         if isinstance(value, (tuple, list, set, frozenset)):

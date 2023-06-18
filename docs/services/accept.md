@@ -379,8 +379,12 @@ from paymob.accept import HMACValidator
 incoming_hmac = "<HMAC sent in query params>"
 callback_dict = "<Callback Dict>"
 hmac_validator = HMACValidator(incoming_hmac=incoming_hmac, callback_dict=callback_dict
-hmac_validator.is_valid # Returns True or False
+print("Is HMAC Valid: {hmac_validator.is_valid}")
 )
+```
+
+```bash
+Is HMAC Valid: True
 ```
 
 **Parameters**
@@ -484,5 +488,90 @@ iframe = AcceptUtils.create_iframe_url(
 | `payment_key` | `Yes` | Payment Key obtained from [Create Payment Key](#create-payment-key) |
 
 
+# Handling Callbacks
+
+When your customer performs a transaction or any action related to some transaction "Void, Refund, Pay, etc...", you'd receive callbacks from `Paymob` as a notification after performing any payment process, you would receive a JSON object in POST request which contains a value by which you can know about your payments such as the status of the transaction (success/declined), the order ID related to this transition, the transaction ID and much other information related to your transaction.
+
+There are three types of callbacks:
+- **Transaction Callback**
+- **Card Token Callback**
+- **Delivery Status Callback**
+
+We've added a const class of transaction callback types to make to easy for you to do your checks
+and avoid repeating the strings in your code. and you can import it from `constants` and here is an example:
+```python
+from paymob.accept.constants import AcceptCallbackTypes
+
+AcceptCallbackTypes.TRANSACTION
+AcceptCallbackTypes.CARD_TOKEN
+AcceptCallbackTypes.DELIVERY_STATUS
+```
+
+**Card Token Callback Sample**
+```python
+{
+    "type": AcceptCallbackTypes.CARD_TOKEN,
+    "obj" : {
+        "id": 10,
+        "token": "d20d94...8000687835c3f1a9da9",
+        "masked_pan": "xxxx-xxxx-xxxx-2346",
+        "merchant_id": 1,
+        "card_subtype": "MasterCard",
+        "created_at": "2016-12-26T06:49:18.017207Z",
+        "email": "test@email.com",
+        "order_id": "55"
+    }
+}
+```
+
+**Delivery Status Callback Sample**
+```python
+{
+    "type": AcceptCallbackTypes.DELIVERY_STATUS,
+    "obj": {
+        "order_id": 5530,
+        "order_delivery_status": "Scheduled", 
+        "merchant_id": 455,
+        "merchant_name": "Test Merchant", 
+        "updated_at": "2017-01-24T13:29:40" //iso format datetime
+    } 
+}
+```
+
+**Transaction Callback Sample**
+
+Transaction Callback obj attributes varies depending on the payment method, so you can check it from [Paymob Docs][transaction-callbacks] and we will add samples for each payment method next releases.
+
+<br>
+
+After receiving a callback you must validate it to verify Accept's identity and integrity of its data.
+So, you can use `AcceptCallback` to validate the callback you have been received.
+
+**Example:**
+
+```python
+from paymob.accept.callbacks import AcceptCallback
+incoming_hmac = <HMAC You received>
+callback_dict = <Callback you received>
+callback = AcceptCallback(
+    incoming_hmac=incoming_hmac,
+    callback_dict=callback_dict
+)
+print(f"Callback: {callback}")
+print(f"Callback Type: {callback.type}")
+print(f"Obj id: {callback.obj.id}")
+print(f"HMAC Check: {callback.is_valid}") # Do the HMAC Check
+```
+
+**Output:**
+```bash
+Callback: <paymob.accept.callbacks.transaction_callback.TransactionCallback object at 0x7fcff00cc970>
+Callback Type: TRANSACTION
+Obj id: 109628234
+HMAC Check: True
+```
+
+
 [accept-dashboard]: https://accept.paymob.com/portal2/en/home
 [accept-iframes]: https://accept.paymob.com/portal2/en/iframes
+[transaction-callbacks]: https://docs.paymob.com/docs/transaction-webhooks
