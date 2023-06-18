@@ -30,6 +30,9 @@ flowchart TD
     C --> G[Card Token Payment]
 ```
 
+### [Payment Flow Full Examples](docs/services/accept_payment_flow.md)
+
+-----
 
 # APIs
 
