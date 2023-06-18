@@ -544,8 +544,9 @@ Transaction Callback obj attributes varies depending on the payment method, so y
 
 <br>
 
-After receiving a callback you must validate it to verify Accept's identity and integrity of its data.
-So, you can use `AcceptCallback` to validate the callback you have been received.
+After receiving a callback you must validate it to verify Accept's identity and integrity of its data. We've talked about `HMAC` before, and you can use the example we've talked about in [HMAC-Validation](#hmac-validation) section or you can use `AcceptCallback`.
+
+`AcceptCallback` is a dynamic callback class that takes the callback dict (Transaction, Card Token, or Delivery Status) and the `HMAC` you've received and turns it into a class object with an HMAC validation check, so you don't need to import `HMACValidator` to check it.
 
 **Example:**
 
