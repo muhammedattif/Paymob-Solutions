@@ -73,7 +73,7 @@ class TestAcceptConnection(AbstractTestCase):
         """test _get_auth_token: Code is not SUCCESS"""
 
         mock_get_headers.return_value = {}
-        mock_post.return_value = HTTP_EXCEPTION, {}, None
+        mock_post.return_value = HTTP_EXCEPTION, ResponseFeedBack(message=HTTP_EXCEPTION_MESSAGE)
 
         connection = AcceptConnection()
         auth_token = connection._get_auth_token()
@@ -89,7 +89,10 @@ class TestAcceptConnection(AbstractTestCase):
 
         expected_token = "*****"
         mock_get_headers.return_value = {}
-        mock_post.return_value = SUCCESS, {"token": expected_token}, None
+        mock_post.return_value = SUCCESS, ResponseFeedBack(
+            message=HTTP_EXCEPTION_MESSAGE,
+            data={"token": expected_token},
+        )
 
         connection = AcceptConnection()
         actual_auth_token = connection._get_auth_token()

@@ -397,7 +397,7 @@ class AcceptAPIClient:
         """
 
         code, feedback = self.connection.get(
-            url=URLsConfig.GET_TRANSACTION_ID.format(transaction_id=transaction_id),
+            url=URLsConfig.GET_TRANSACTION_BY_ID.format(transaction_id=transaction_id),
         )
         # TODO: Validates APIs Return Data Option
         transaction_instance = None
@@ -431,7 +431,7 @@ class AcceptAPIClient:
             request_body["order_id"] = order_id
 
         code, feedback = self.connection.post(
-            url=URLsConfig.GET_TRANSACTION_MERCHANT_ID,
+            url=URLsConfig.GET_TRANSACTION_BY_MERCHANT_ID,
             json=request_body,
         )
 
