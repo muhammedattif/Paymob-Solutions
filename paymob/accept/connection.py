@@ -54,7 +54,7 @@ class AcceptConnection:
 
         request_body = {"api_key": Credentials.ACCEPT_API_KEY}
 
-        code, data, _ = self.post(
+        code, feedback = self.post(
             url=URLsConfig.AUTH_TOKEN,
             json=request_body,
         )
@@ -62,7 +62,7 @@ class AcceptConnection:
         # TODO: Validates APIs Return Data Option
         token = None
         if code == SUCCESS:
-            token = data.get("token")
+            token = feedback.data.get("token")
         return token
 
     def _process_request(self, call, *args, **kwargs) -> Tuple[str, Dict[str, Any], ResponseFeedBack]:
