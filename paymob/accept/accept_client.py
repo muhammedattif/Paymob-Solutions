@@ -64,7 +64,7 @@ class AcceptAPIClient:
             "shipping_details": shipping_details,
         }
 
-        code, order_data, feedback = self.connection.post(
+        code, feedback = self.connection.post(
             url=URLsConfig.CREATE_ORDER,
             json=request_body,
         )
@@ -72,7 +72,7 @@ class AcceptAPIClient:
         # TODO: Validates APIs Return Data Option
         order_instance = None
         if code == SUCCESS:
-            order_instance = Order(**order_data)
+            order_instance = Order(**feedback.data)
             feedback.message = "Order with ID: {0} Created Successfully".format(order_instance.id)
         return code, order_instance, feedback
 
@@ -89,14 +89,14 @@ class AcceptAPIClient:
             Tuple[str, Union[Order, None], ResponseFeedBack]: (Code, Order Instance, ResponseFeedBack Instance)
         """
 
-        code, order_data, feedback = self.connection.get(
+        code, feedback = self.connection.get(
             url=URLsConfig.GET_ORDER.format(order_id=order_id),
         )
 
         # TODO: Validates APIs Return Data Option
         order_instance = None
         if code == SUCCESS:
-            order_instance = Order(**order_data)
+            order_instance = Order(**feedback.data)
             feedback.message = "Successfully Retrieved Order: {0}".format(order_id)
         return code, order_instance, feedback
 
@@ -139,7 +139,7 @@ class AcceptAPIClient:
         if card_token_key:
             request_body["token"] = card_token_key
 
-        code, data, feedback = self.connection.post(
+        code, feedback = self.connection.post(
             url=URLsConfig.PAYMENT_KEY,
             json=request_body,
         )
@@ -148,7 +148,7 @@ class AcceptAPIClient:
         payment_key = None
         if code == SUCCESS:
             feedback.message = "Payment Key for Order: {0} Created Successfully".format(order_id)
-            payment_key = data.get("token")
+            payment_key = feedback.data.get("token")
         return code, payment_key, feedback
 
     def proceed_kiosk_payment(
@@ -172,7 +172,7 @@ class AcceptAPIClient:
             "payment_token": payment_key,
         }
 
-        code, transaction_data, feedback = self.connection.post(
+        code, feedback = self.connection.post(
             url=URLsConfig.PAY,
             json=request_body,
         )
@@ -180,7 +180,7 @@ class AcceptAPIClient:
         # TODO: Validates APIs Return Data Option
         transaction_instance = None
         if code == SUCCESS:
-            transaction_instance = Transaction(connection=self.connection, **transaction_data)
+            transaction_instance = Transaction(connection=self.connection, **feedback.data)
             feedback.message = "Kiosk Payment Processed Successfully"
         return code, transaction_instance, feedback
 
@@ -207,7 +207,7 @@ class AcceptAPIClient:
             "payment_token": payment_key,
         }
 
-        code, transaction_data, feedback = self.connection.post(
+        code, feedback = self.connection.post(
             url=URLsConfig.PAY,
             json=request_body,
         )
@@ -215,7 +215,7 @@ class AcceptAPIClient:
         # TODO: Validates APIs Return Data Option
         transaction_instance = None
         if code == SUCCESS:
-            transaction_instance = Transaction(connection=self.connection, **transaction_data)
+            transaction_instance = Transaction(connection=self.connection, **feedback.data)
             feedback.message = "Wallet Payment for Identifier: {0} Processed Successfully".format(identifier)
         return code, transaction_instance, feedback
 
@@ -240,7 +240,7 @@ class AcceptAPIClient:
             "payment_token": payment_key,
         }
 
-        code, transaction_data, feedback = self.connection.post(
+        code, feedback = self.connection.post(
             url=URLsConfig.PAY,
             json=request_body,
         )
@@ -248,7 +248,7 @@ class AcceptAPIClient:
         # TODO: Validates APIs Return Data Option
         transaction_instance = None
         if code == SUCCESS:
-            transaction_instance = Transaction(connection=self.connection, **transaction_data)
+            transaction_instance = Transaction(connection=self.connection, **feedback.data)
             feedback.message = "Cash Payment Processed Successfully"
         return code, transaction_instance, feedback
 
@@ -275,7 +275,7 @@ class AcceptAPIClient:
             "payment_token": payment_key,
         }
 
-        code, transaction_data, feedback = self.connection.post(
+        code, feedback = self.connection.post(
             url=URLsConfig.PAY,
             json=request_body,
         )
@@ -283,7 +283,7 @@ class AcceptAPIClient:
         # TODO: Validates APIs Return Data Option
         transaction_instance = None
         if code == SUCCESS:
-            transaction_instance = Transaction(connection=self.connection, **transaction_data)
+            transaction_instance = Transaction(connection=self.connection, **feedback.data)
             feedback.message = "Payment With Saved Card Token Processed Successfully"
         return code, transaction_instance, feedback
 
@@ -320,7 +320,7 @@ class AcceptAPIClient:
             "delivery_needed": delivery_needed,
         }
 
-        code, invoice_data, feedback = self.connection.post(
+        code, feedback = self.connection.post(
             url=URLsConfig.CREATE_INVOICE_LINK,
             json=request_body,
         )
@@ -328,7 +328,7 @@ class AcceptAPIClient:
         # TODO: Validates APIs Return Data Option
         invoice_instance = None
         if code == SUCCESS:
-            invoice_instance = Invoice(**invoice_data)
+            invoice_instance = Invoice(**feedback.data)
             feedback.message = "Invoice Link Data Retrieved Successfully"
         return code, invoice_instance, feedback
 
@@ -370,7 +370,7 @@ class AcceptAPIClient:
             "delivery_needed": delivery_needed,
         }
 
-        code, product_data, feedback = self.connection.post(
+        code, feedback = self.connection.post(
             url=URLsConfig.CREATE_PRODUCT_LINK,
             json=request_body,
         )
@@ -378,7 +378,7 @@ class AcceptAPIClient:
         # TODO: Validates APIs Return Data Option
         product_instance = None
         if code == SUCCESS:
-            product_instance = Product(**product_data)
+            product_instance = Product(**feedback.data)
             feedback.message = "Product Link Data Retrieved Successfully"
         return code, product_instance, feedback
 
@@ -396,13 +396,13 @@ class AcceptAPIClient:
             Tuple[str, Union[Transaction, None], ResponseFeedBack]: (Code, Transaction Instance, ResponseFeedBack Instance)
         """
 
-        code, transaction_data, feedback = self.connection.get(
+        code, feedback = self.connection.get(
             url=URLsConfig.GET_TRANSACTION_ID.format(transaction_id=transaction_id),
         )
         # TODO: Validates APIs Return Data Option
         transaction_instance = None
         if code == SUCCESS:
-            transaction_instance = Transaction(connection=self.connection, **transaction_data)
+            transaction_instance = Transaction(connection=self.connection, **feedback.data)
             feedback.message = "Transaction: {0} Retrieved Successfully".format(transaction_instance.id)
         return code, transaction_instance, feedback
 
@@ -430,7 +430,7 @@ class AcceptAPIClient:
         if order_id:
             request_body["order_id"] = order_id
 
-        code, transaction_data, feedback = self.connection.post(
+        code, feedback = self.connection.post(
             url=URLsConfig.GET_TRANSACTION_MERCHANT_ID,
             json=request_body,
         )
@@ -438,7 +438,7 @@ class AcceptAPIClient:
         # TODO: Validates APIs Return Data Option
         transaction_instance = None
         if code == SUCCESS:
-            transaction_instance = Transaction(connection=self.connection, **transaction_data)
+            transaction_instance = Transaction(connection=self.connection, **feedback.data)
             feedback.message = (
                 "Transaction: {0} of Order ID: {1} and Merchant Order ID: {2} Retrieved Successfully".format(
                     transaction_instance.id,

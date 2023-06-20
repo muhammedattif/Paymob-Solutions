@@ -65,8 +65,59 @@ class AcceptConnection:
             token = data.get("token")
         return token
 
+    def _process_request(self, call, *args, **kwargs) -> Tuple[str, Dict[str, Any], ResponseFeedBack]:
+        """Process the Request
+
+        Args:
+            call (Session.get/Session.post): Session.get/Session.post
+            *args, **kwargs: Same Args of requests.post/requests.get methods
+
+        Returns:
+            Tuple[str, Dict[str, Any], ResponseFeedBack]: Tuple containes the Following (Code, Data, Success/Error Message)
+        """
+
+        reponse_data = None
+        try:
+            response = call(timeout=ACCEPT_APIS_TIMEOUT_SECONDES, *args, **kwargs)
+            reponse_data = response.json()
+            response.raise_for_status()
+        except JSONDecodeError as error:
+            reponse_feedback = ResponseFeedBack(
+                message=JSON_DECODE_EXCEPTION_MESSAGE,
+                status_code=response.status_code,
+                exception_error=error,
+            )
+            return JSON_DECODE_EXCEPTION, reponse_feedback
+        except HTTPError as error:
+            reponse_feedback = ResponseFeedBack(
+                message=HTTP_EXCEPTION_MESSAGE,
+                data=reponse_data,
+                status_code=response.status_code,
+                exception_error=error,
+            )
+            return HTTP_EXCEPTION, reponse_feedback
+        except RequestException as error:
+            reponse_feedback = ResponseFeedBack(
+                message=REQUEST_EXCEPTION_MESSAGE,
+                exception_error=error,
+            )
+            return REQUEST_EXCEPTION, reponse_feedback
+        except Exception as error:
+            reponse_feedback = ResponseFeedBack(
+                message=UNHANDLED_EXCEPTION_MESSAGE,
+                exception_error=error,
+            )
+            return UNHANDLED_EXCEPTION, reponse_feedback
+
+        reponse_feedback = ResponseFeedBack(
+            message=SUCCESS_MESSAGE,
+            data=reponse_data,
+            status_code=response.status_code,
+        )
+        return SUCCESS, reponse_feedback
+
     def get(self, *args, **kwargs) -> Tuple[str, Dict[str, Any], ResponseFeedBack]:
-        """Wrapper of requests.get method
+        """Wrapper for requests.get method
 
         Args:
             Same Args of requests.post/requests.get methods
@@ -74,41 +125,10 @@ class AcceptConnection:
         Returns:
             Tuple[str, Dict[str, Any], ResponseFeedBack]: Tuple containes the Following (Code, Data, Success/Error Message)
         """
-        # TODO: The Following Logic will be Abstracted
-        reponse_data = None
-        try:
-            response = self.session.get(timeout=ACCEPT_APIS_TIMEOUT_SECONDES, *args, **kwargs)
-            reponse_data = response.json()
-            response.raise_for_status()
-        except JSONDecodeError as error:
-            reponse_feedback = ResponseFeedBack(
-                message=JSON_DECODE_EXCEPTION_MESSAGE,
-                data=error,
-                status_code=response.status_code,
-            )
-            return JSON_DECODE_EXCEPTION, None, reponse_feedback
-        except HTTPError:
-            reponse_feedback = ResponseFeedBack(
-                message=HTTP_EXCEPTION_MESSAGE,
-                data=reponse_data,
-                status_code=response.status_code,
-            )
-            return HTTP_EXCEPTION, reponse_data, reponse_feedback
-        except RequestException as error:
-            reponse_feedback = ResponseFeedBack(message=REQUEST_EXCEPTION_MESSAGE, data=error)
-            return REQUEST_EXCEPTION, None, reponse_feedback
-        except Exception as error:
-            reponse_feedback = ResponseFeedBack(
-                message=UNHANDLED_EXCEPTION_MESSAGE,
-                data=error,
-            )
-            return UNHANDLED_EXCEPTION, None, reponse_feedback
-
-        reponse_feedback = ResponseFeedBack(message=SUCCESS_MESSAGE, status_code=response.status_code)
-        return SUCCESS, reponse_data, reponse_feedback
+        return self._process_request(call=self.session.get, *args, **kwargs)
 
     def post(self, *args, **kwargs) -> Tuple[str, Dict[str, Any], ResponseFeedBack]:
-        """Wrapper of requests.get method
+        """Wrapper for requests.get method
 
         Args:
             Same Args of requests.post/requests.get methods
@@ -116,35 +136,4 @@ class AcceptConnection:
         Returns:
             Tuple[str, Dict[str, Any], ResponseFeedBack]: Tuple containes the Following (Code, Data, Success/Error Message)
         """
-        # TODO: The Following Logic will be Abstracted
-        reponse_data = None
-        try:
-            response = self.session.post(timeout=ACCEPT_APIS_TIMEOUT_SECONDES, *args, **kwargs)
-            reponse_data = response.json()
-            response.raise_for_status()
-        except JSONDecodeError as error:
-            reponse_feedback = ResponseFeedBack(
-                message=JSON_DECODE_EXCEPTION_MESSAGE,
-                data=error,
-                status_code=response.status_code,
-            )
-            return JSON_DECODE_EXCEPTION, None, reponse_feedback
-        except HTTPError:
-            reponse_feedback = ResponseFeedBack(
-                message=HTTP_EXCEPTION_MESSAGE,
-                data=reponse_data,
-                status_code=response.status_code,
-            )
-            return HTTP_EXCEPTION, reponse_data, reponse_feedback
-        except RequestException as error:
-            reponse_feedback = ResponseFeedBack(message=REQUEST_EXCEPTION_MESSAGE, data=error)
-            return REQUEST_EXCEPTION, None, reponse_feedback
-        except Exception as error:
-            reponse_feedback = ResponseFeedBack(
-                message=UNHANDLED_EXCEPTION_MESSAGE,
-                data=error,
-            )
-            return UNHANDLED_EXCEPTION, None, reponse_feedback
-
-        reponse_feedback = ResponseFeedBack(message=SUCCESS_MESSAGE, status_code=response.status_code)
-        return SUCCESS, reponse_data, reponse_feedback
+        return self._process_request(call=self.session.post, *args, **kwargs)
