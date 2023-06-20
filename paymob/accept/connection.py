@@ -1,15 +1,13 @@
 # Python Standard Library Imports
-import json
 from typing import Any, Dict, Tuple, Union
 
 # Other Third Party Imports
 import requests
+from requests import HTTPError, JSONDecodeError, RequestException
 
 # First Party Imports
 from paymob.data_classes import ResponseFeedBack
-
-from .config import ACCEPT_APIS_TIMEOUT_SECONDES, Credentials, URLsConfig
-from .response_codes import (
+from paymob.response_codes import (
     HTTP_EXCEPTION,
     HTTP_EXCEPTION_MESSAGE,
     JSON_DECODE_EXCEPTION,
@@ -17,9 +15,12 @@ from .response_codes import (
     REQUEST_EXCEPTION,
     REQUEST_EXCEPTION_MESSAGE,
     SUCCESS,
+    SUCCESS_MESSAGE,
     UNHANDLED_EXCEPTION,
     UNHANDLED_EXCEPTION_MESSAGE,
 )
+
+from .config import ACCEPT_APIS_TIMEOUT_SECONDES, Credentials, URLsConfig
 
 
 class AcceptConnection:
@@ -79,33 +80,31 @@ class AcceptConnection:
             response = self.session.get(timeout=ACCEPT_APIS_TIMEOUT_SECONDES, *args, **kwargs)
             reponse_data = response.json()
             response.raise_for_status()
-        except json.JSONDecodeError as error:
+        except JSONDecodeError as error:
             reponse_feedback = ResponseFeedBack(
                 message=JSON_DECODE_EXCEPTION_MESSAGE,
                 data=error,
                 status_code=response.status_code,
             )
             return JSON_DECODE_EXCEPTION, None, reponse_feedback
-        except requests.exceptions.HTTPError as error:
+        except HTTPError:
             reponse_feedback = ResponseFeedBack(
                 message=HTTP_EXCEPTION_MESSAGE,
                 data=reponse_data,
                 status_code=response.status_code,
             )
             return HTTP_EXCEPTION, reponse_data, reponse_feedback
-        except requests.exceptions.RequestException as error:
+        except RequestException as error:
             reponse_feedback = ResponseFeedBack(message=REQUEST_EXCEPTION_MESSAGE, data=error)
             return REQUEST_EXCEPTION, None, reponse_feedback
         except Exception as error:
             reponse_feedback = ResponseFeedBack(
                 message=UNHANDLED_EXCEPTION_MESSAGE,
                 data=error,
-                status_code=response.status_code,
             )
             return UNHANDLED_EXCEPTION, None, reponse_feedback
 
-        message = "API Successfully Called."
-        reponse_feedback = ResponseFeedBack(message=message, status_code=response.status_code)
+        reponse_feedback = ResponseFeedBack(message=SUCCESS_MESSAGE, status_code=response.status_code)
         return SUCCESS, reponse_data, reponse_feedback
 
     def post(self, *args, **kwargs) -> Tuple[str, Dict[str, Any], ResponseFeedBack]:
@@ -123,31 +122,29 @@ class AcceptConnection:
             response = self.session.post(timeout=ACCEPT_APIS_TIMEOUT_SECONDES, *args, **kwargs)
             reponse_data = response.json()
             response.raise_for_status()
-        except json.JSONDecodeError as error:
+        except JSONDecodeError as error:
             reponse_feedback = ResponseFeedBack(
                 message=JSON_DECODE_EXCEPTION_MESSAGE,
                 data=error,
                 status_code=response.status_code,
             )
             return JSON_DECODE_EXCEPTION, None, reponse_feedback
-        except requests.exceptions.HTTPError as error:
+        except HTTPError:
             reponse_feedback = ResponseFeedBack(
                 message=HTTP_EXCEPTION_MESSAGE,
                 data=reponse_data,
                 status_code=response.status_code,
             )
             return HTTP_EXCEPTION, reponse_data, reponse_feedback
-        except requests.exceptions.RequestException as error:
+        except RequestException as error:
             reponse_feedback = ResponseFeedBack(message=REQUEST_EXCEPTION_MESSAGE, data=error)
             return REQUEST_EXCEPTION, None, reponse_feedback
         except Exception as error:
             reponse_feedback = ResponseFeedBack(
                 message=UNHANDLED_EXCEPTION_MESSAGE,
                 data=error,
-                status_code=response.status_code,
             )
             return UNHANDLED_EXCEPTION, None, reponse_feedback
 
-        message = "API Successfully Called."
-        reponse_feedback = ResponseFeedBack(message=message, status_code=response.status_code)
+        reponse_feedback = ResponseFeedBack(message=SUCCESS_MESSAGE, status_code=response.status_code)
         return SUCCESS, reponse_data, reponse_feedback

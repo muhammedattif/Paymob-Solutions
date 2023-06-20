@@ -13,3 +13,4 @@ JSON_DECODE_EXCEPTION_MESSAGE = "An Error Occurred While Parsing the Response in
 REQUEST_EXCEPTION_MESSAGE = "An Error Occurred During the Request"
 HTTP_EXCEPTION_MESSAGE = "Non 2xx Status Code Returned."
 UNHANDLED_EXCEPTION_MESSAGE = "Unhandled Exception"
+SUCCESS_MESSAGE = "API Successfully Called."

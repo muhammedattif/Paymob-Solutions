@@ -4,11 +4,13 @@ from __future__ import annotations
 # Python Standard Library Imports
 from typing import Tuple, Union
 
+# First Party Imports
+from paymob.response_codes import SUCCESS
+
 from .config import URLsConfig
 from .connection import AcceptConnection
 from .data_classes import TransactionDataClass
 from .factories import DynamicTransactionFactory
-from .response_codes import SUCCESS
 
 # TODO: Allow it to return DynamicTransactionFactory or TransactionDataClass once Validation settings is supported
 AbstractTransaction = (
@@ -19,14 +21,14 @@ AbstractTransaction = (
 class Transaction(AbstractTransaction):
     """Final Transaction Class"""
 
-    def __init__(self, connection: AcceptConnection, *args, **kwargs) -> None:
+    def __init__(self, connection: AcceptConnection = None, *args, **kwargs) -> None:
         """Initializing Transaction Attributes
 
         Args:
-            connection (AcceptConnection): Accept Connection Insatance
+            connection (AcceptConnection): Accept Connection Insatance. Defaults to None.
         """
         super().__init__(*args, **kwargs)
-        self.connection = connection
+        self.connection = connection or AcceptConnection()
 
     def __str__(self) -> str:
         if hasattr(self, "id"):

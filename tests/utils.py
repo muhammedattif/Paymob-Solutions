@@ -23,3 +23,6 @@ class AbstractTestCase:
 
     def assertNoHasAttr(self, obj, attr):
         assert hasattr(obj, attr) is not True
+
+    def assertIsInstance(self, instance, klass):
+        assert isinstance(instance, klass)

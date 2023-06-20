@@ -8,4 +8,4 @@ class ResponseFeedBack:
 
     message: Optional[str]
     data: Any = None
-    status_code: int = 500
+    status_code: int = None
