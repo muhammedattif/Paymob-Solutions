@@ -53,7 +53,7 @@ class Transaction(AbstractTransaction):
             "amount_cents": amount_cents,
         }
 
-        code, transaction_data, message = self.connection.post(
+        code, feedback = self.connection.post(
             url=URLsConfig.REFUND_TRANSACTION,
             json=request_body,
         )
@@ -61,11 +61,11 @@ class Transaction(AbstractTransaction):
         # TODO: Validates APIs Return Data Option
         transaction_instance = None
         if code == SUCCESS:
-            transaction_instance = Transaction(connection=self.connection, **transaction_data)
-            message = "Transaction: {0} Refund Processed Successfully".format(
+            transaction_instance = Transaction(connection=self.connection, **feedback.data)
+            feedback.message = "Transaction: {0} Refund Processed Successfully".format(
                 self.id,
             )
-        return code, transaction_instance, message
+        return code, transaction_instance, feedback
 
     def void(
         self,
@@ -80,7 +80,7 @@ class Transaction(AbstractTransaction):
             "transaction_id": self.id,
         }
 
-        code, transaction_data, message = self.connection.post(
+        code, feedback = self.connection.post(
             url=URLsConfig.VOID_TRANSACTION,
             json=request_body,
         )
@@ -88,11 +88,11 @@ class Transaction(AbstractTransaction):
         # TODO: Validates APIs Return Data Option
         transaction_instance = None
         if code == SUCCESS:
-            transaction_instance = Transaction(connection=self.connection, **transaction_data)
-            message = "Transaction: {0} Void Processed Successfully".format(
+            transaction_instance = Transaction(connection=self.connection, **feedback.data)
+            feedback.message = "Transaction: {0} Void Processed Successfully".format(
                 self.id,
             )
-        return code, transaction_instance, message
+        return code, transaction_instance, feedback
 
     def capture(
         self,
@@ -112,16 +112,16 @@ class Transaction(AbstractTransaction):
             "amount_cents": amount_cents,
         }
 
-        code, transaction_data, message = self.connection.post(
-            url=URLsConfig.CAPTURE,
+        code, feedback = self.connection.post(
+            url=URLsConfig.CAPTURE_TRANSACTION,
             json=request_body,
         )
 
         # TODO: Validates APIs Return Data Option
         transaction_instance = None
         if code == SUCCESS:
-            transaction_instance = Transaction(connection=self.connection, **transaction_data)
-            message = "Transaction: {0} Capture Processed Successfully".format(
+            transaction_instance = Transaction(connection=self.connection, **feedback.data)
+            feedback.message = "Transaction: {0} Capture Processed Successfully".format(
                 self.id,
             )
-        return code, transaction_instance, message
+        return code, transaction_instance, feedback

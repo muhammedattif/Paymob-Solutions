@@ -23,6 +23,6 @@ class URLsConfig:
     GET_TRANSACTION_BY_MERCHANT_ID = ACCEPT_BASE_URL + "/api/ecommerce/orders/transaction_inquiry"
     REFUND_TRANSACTION = ACCEPT_BASE_URL + "/api/acceptance/void_refund/refund"
     VOID_TRANSACTION = ACCEPT_BASE_URL + "/api/acceptance/void_refund/void"
-    CAPTURE = ACCEPT_BASE_URL + "/api/acceptance/capture"
+    CAPTURE_TRANSACTION = ACCEPT_BASE_URL + "/api/acceptance/capture"
     CREATE_INVOICE_LINK = ACCEPT_BASE_URL + "/api/ecommerce/orders"
     CREATE_PRODUCT_LINK = ACCEPT_BASE_URL + "/api/ecommerce/products"
