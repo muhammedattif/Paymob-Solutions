@@ -10,7 +10,7 @@ ACCEPT_HMAC_SECRET=<YOUR HMAC SECRET>
 After setting up your secret keys, now you will be able to use Accept API interfaces.
 
 
-# 2- Payment Flow
+# 2 Payment Flow
 
 Payment Flow for [IFrame](#create-iframe-url) Payment
 ```mermaid
@@ -34,9 +34,9 @@ flowchart TD
 
 -----
 
-# 3- APIs
+# 3 APIs
 
-## 3.1- Initialize `AcceptAPIClient`
+## 3.1 Initialize `AcceptAPIClient`
 
 ```python
 from paymob.accept import AcceptAPIClient
@@ -46,7 +46,7 @@ accept_api_client = AcceptAPIClient()
 
 by initializing an object from `AcceptAPIClient` a TCP connection session is established with Paymob server and an `Auth Token` is automatically retrieved.
 
-## 3.2- Create Order
+## 3.2 Create Order
 
 You will register an order to Accept's database, so that you can pay for it later using a transaction.
 Order ID will be the identifier that you will use to link the transaction(s) performed to your system, as one order can have more than one transaction.
@@ -86,7 +86,7 @@ code, order, feedback = accept_api_client.create_order(
 )
 ```
 
-## 3.3- Get Order
+## 3.3 Get Order
 
 Retrieves order data.
 
@@ -111,7 +111,7 @@ code, order, feedback = accept_api_client.get_order(
 )
 ```
 
-## 3.4- Create Payment Key
+## 3.4 Create Payment Key
 
 At this step, you will obtain a payment_key token. This key will be used to authenticate your payment request. It will be also used for verifying your transaction request metadata.
 
@@ -154,7 +154,7 @@ code, payment_key, feedback = accept_api_client.create_payment_key(
 ```
 
 
-## 3.5- Wallet Payment
+## 3.5 Wallet Payment
 
 After creating the payment key, you may need to processed to `Mobile Wallets` payment, so you need to use the following API to get the `redirect URL`.
 
@@ -190,7 +190,7 @@ Redirect URL: https://accept.paymob.com/****
 ```
 
 
-## 3.6- Kiosk Payment
+## 3.6 Kiosk Payment
 
 After creating the payment key, you may need to processed to `Kiosk` payment, so you need to use the following API to get the `bill_reference`.
 
@@ -220,7 +220,7 @@ Output:
 Bill Reference: 123456789
 ```
 
-## 3.6- CASH Payment
+## 3.6 CASH Payment
 
 After creating the payment key, you may need to processed to `Cash` payment, so you need to use the following API
 
@@ -245,7 +245,7 @@ code, transaction, feedback = accept_api_client.proceed_cash_payment(
 ```
 
 
-## 3.7- Card Token Payment
+## 3.7 Card Token Payment
 
 **Prerequisites:** Please ask your technical contact for a recurring payment setup, you should receive extra integration ID in your dashboard.
 
@@ -274,7 +274,7 @@ code, transaction, feedback = accept_api_client.proceed_card_token_payment(
 )
 ```
 
-## 3.8- Create Invoice Link
+## 3.8 Create Invoice Link
 
 Use this API in case you need to generate invoice links using an API instead of generating it from your Accept dashboard.
 
@@ -333,7 +333,7 @@ Invlice URL: https://accept.paymob.com/****
 ```
 
 
-## 3.9- Create Product Link
+## 3.9 Create Product Link
 
 Use this API in case you need to generate product links using an API instead of generating it from your Accept dashboard.
 
@@ -383,7 +383,7 @@ Product URL: https://accept.paymob.com/****
 ```
 
 
-## 3.10- Transaction APIs
+## 3.10 Transaction APIs
 
 Use this APIs to `Retrieve`, `Auth`, `Capture`, `Void`, or `Refund` a Transaction.
 
@@ -766,7 +766,7 @@ Feedback Status Code: 200
 
 ---
 
-# HMAC Validation
+# 4 HMAC Validation
 
 Accept callbacks rely on HMAC authentication to verify Accept's identity and integrity of its data.
 Every and each callback invoked from Accept's server-side has its own HMAC validation.
@@ -799,11 +799,11 @@ Is HMAC Valid: True
 
 ---
 
-# Utility Methods
+# 5 Utility Methods
 
 We've implemented a few methods to help you during the integration/development process.
 
-### - Generate Merchant Order ID
+### 5.1 Generate Merchant Order ID
 
 It is a method that builds Merchant Order ID with the following format
 ```
@@ -834,7 +834,7 @@ merchant_order_id = AcceptUtils.generate_merchant_order_id(
 
 
 
-### - Extract Mid key and Identifier
+### 5.2 Extract Mid key and Identifier
 
 It allowes you to reverse the previous process
 
@@ -852,7 +852,7 @@ mid_key, identifier = AcceptUtils.extract_mid_key_and_identifier(
 The `mid_key` will be `x` and `identifier` will be `1`
 
 
-### - Create IFrame URL
+### 5.3 Create IFrame URL
 
 if you want to proceed with any of the following payment methods:
 
@@ -889,7 +889,7 @@ iframe = AcceptUtils.create_iframe_url(
 | `payment_key` | `Yes` | Payment Key obtained from [Create Payment Key](#create-payment-key) |
 
 
-# Handling Callbacks
+# 6 Handling Callbacks
 
 When your customer performs a transaction or any action related to some transaction "Void, Refund, Pay, etc...", you'd receive callbacks from `Paymob` as a notification after performing any payment process, you would receive a JSON object in POST request which contains a value by which you can know about your payments such as the status of the transaction (success/declined), the order ID related to this transition, the transaction ID and much other information related to your transaction.
 
