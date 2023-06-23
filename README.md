@@ -3,7 +3,7 @@
 [![python](https://img.shields.io/badge/Python-v3.8-3776AB.svg?style=flat&logo=python&logoColor=yellow)](https://www.python.org)  [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)  [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 
-# 1 Description
+# 1- Description
 
 The Paymob Python package provides convenient access to the `Paymob` APIs from applications written in the Python language.
 Current version only supports the following services:
@@ -11,11 +11,11 @@ Current version only supports the following services:
 
 `Payouts` and other services will be added in the next releases.
 
-# 2 Requirements
+# 2- Requirements
 Before you begin, ensure you have met the following requirements:
 * Python 3.8+
 
-# 3 Installation Instructions
+# 3- Installation Instructions
 
 You don't need this source code unless you want to modify the package. If you just
 want to use the package, just run:
@@ -24,7 +24,7 @@ want to use the package, just run:
 pip install --upgrade paymob-solutions
 ```
 
-# 4 Usage
+# 4- Usage
 
 ### 4.1 Services
 
@@ -125,7 +125,7 @@ Feedback Exception Error: 404 Client Error: Not Found for url: https://accept.pa
 
 -----
 
-# 5 Codes Reference
+# 5- Codes Reference
 
 ### 5.1 Success Codes
 | Variable | Code | Description | 
@@ -154,7 +154,7 @@ from paymob.response_codes import (
 
 ----
 
-# 6 Settings
+# 6- Settings
 
 You can customized some behaves of `Paymob` by adding the following settings in `.env` file.
 

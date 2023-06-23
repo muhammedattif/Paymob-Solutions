@@ -1,4 +1,4 @@
-# 1 Requirements
+# 1- Requirements
 
 Before starting to use Accept APIs it needs to be configured with your account's secret keys which is
 available in your [Accept Dashboard][accept-dashboard]. in `.env` Set the following variables:
@@ -10,7 +10,7 @@ ACCEPT_HMAC_SECRET=<YOUR HMAC SECRET>
 After setting up your secret keys, now you will be able to use Accept API interfaces.
 
 
-# 2 Payment Flow
+# 2- Payment Flow
 
 Payment Flow for [IFrame](#create-iframe-url) Payment
 ```mermaid
@@ -30,11 +30,11 @@ flowchart TD
     C --> G[Card Token Payment]
 ```
 
-### [Payment Flow Full Examples](/docs/services/accept_payment_flow.md)
+### 2.1 [Payment Flow Full Examples](/docs/services/accept_payment_flow.md)
 
 -----
 
-# 3 APIs
+# 3- APIs
 
 ## 3.1 Initialize `AcceptAPIClient`
 
@@ -766,7 +766,7 @@ Feedback Status Code: 200
 
 ---
 
-# 4 HMAC Validation
+# 4- HMAC Validation
 
 Accept callbacks rely on HMAC authentication to verify Accept's identity and integrity of its data.
 Every and each callback invoked from Accept's server-side has its own HMAC validation.
@@ -799,7 +799,7 @@ Is HMAC Valid: True
 
 ---
 
-# 5 Utility Methods
+# 5- Utility Methods
 
 We've implemented a few methods to help you during the integration/development process.
 
@@ -889,7 +889,7 @@ iframe = AcceptUtils.create_iframe_url(
 | `payment_key` | `Yes` | Payment Key obtained from [Create Payment Key](#create-payment-key) |
 
 
-# 6 Handling Callbacks
+# 6- Handling Callbacks
 
 When your customer performs a transaction or any action related to some transaction "Void, Refund, Pay, etc...", you'd receive callbacks from `Paymob` as a notification after performing any payment process, you would receive a JSON object in POST request which contains a value by which you can know about your payments such as the status of the transaction (success/declined), the order ID related to this transition, the transaction ID and much other information related to your transaction.
 
