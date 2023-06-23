@@ -73,7 +73,7 @@ class AcceptAPIClient:
         order_instance = None
         if code == SUCCESS:
             order_instance = Order(**feedback.data)
-            feedback.message = "Order with ID: {0} Created Successfully".format(order_instance.id)
+            feedback.message = f"Order with ID: {order_instance.id} Created Successfully"
         return code, order_instance, feedback
 
     def get_order(
@@ -97,7 +97,7 @@ class AcceptAPIClient:
         order_instance = None
         if code == SUCCESS:
             order_instance = Order(**feedback.data)
-            feedback.message = "Successfully Retrieved Order: {0}".format(order_id)
+            feedback.message = f"Successfully Retrieved Order: {order_id}"
         return code, order_instance, feedback
 
     def create_payment_key(
@@ -147,7 +147,7 @@ class AcceptAPIClient:
         # TODO: Validates APIs Return Data Option
         payment_key = None
         if code == SUCCESS:
-            feedback.message = "Payment Key for Order: {0} Created Successfully".format(order_id)
+            feedback.message = f"Payment Key for Order: {order_id} Created Successfully"
             payment_key = feedback.data.get("token")
         return code, payment_key, feedback
 
@@ -216,7 +216,7 @@ class AcceptAPIClient:
         transaction_instance = None
         if code == SUCCESS:
             transaction_instance = Transaction(connection=self.connection, **feedback.data)
-            feedback.message = "Wallet Payment for Identifier: {0} Processed Successfully".format(identifier)
+            feedback.message = f"Wallet Payment for Identifier: {identifier} Processed Successfully"
         return code, transaction_instance, feedback
 
     def proceed_cash_payment(
@@ -403,7 +403,7 @@ class AcceptAPIClient:
         transaction_instance = None
         if code == SUCCESS:
             transaction_instance = Transaction(connection=self.connection, **feedback.data)
-            feedback.message = "Transaction: {0} Retrieved Successfully".format(transaction_instance.id)
+            feedback.message = f"Transaction: {transaction_instance.id} Retrieved Successfully"
         return code, transaction_instance, feedback
 
     @overload
@@ -439,11 +439,5 @@ class AcceptAPIClient:
         transaction_instance = None
         if code == SUCCESS:
             transaction_instance = Transaction(connection=self.connection, **feedback.data)
-            feedback.message = (
-                "Transaction: {0} of Order ID: {1} and Merchant Order ID: {2} Retrieved Successfully".format(
-                    transaction_instance.id,
-                    order_id,
-                    merchant_order_id,
-                )
-            )
+            feedback.message = f"Transaction: {transaction_instance.id} of Order ID: {order_id} and Merchant Order ID: {merchant_order_id} Retrieved Successfully"
         return code, transaction_instance, feedback

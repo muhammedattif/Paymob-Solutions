@@ -62,9 +62,7 @@ class Transaction(AbstractTransaction):
         transaction_instance = None
         if code == SUCCESS:
             transaction_instance = Transaction(connection=self.connection, **feedback.data)
-            feedback.message = "Transaction: {0} Refund Processed Successfully".format(
-                self.id,
-            )
+            feedback.message = f"Transaction: {self.id} Refund Processed Successfully"
         return code, transaction_instance, feedback
 
     def void(
@@ -89,9 +87,7 @@ class Transaction(AbstractTransaction):
         transaction_instance = None
         if code == SUCCESS:
             transaction_instance = Transaction(connection=self.connection, **feedback.data)
-            feedback.message = "Transaction: {0} Void Processed Successfully".format(
-                self.id,
-            )
+            feedback.message = f"Transaction: {self.id} Void Processed Successfully"
         return code, transaction_instance, feedback
 
     def capture(
@@ -121,7 +117,5 @@ class Transaction(AbstractTransaction):
         transaction_instance = None
         if code == SUCCESS:
             transaction_instance = Transaction(connection=self.connection, **feedback.data)
-            feedback.message = "Transaction: {0} Capture Processed Successfully".format(
-                self.id,
-            )
+            feedback.message = f"Transaction: {self.id} Capture Processed Successfully"
         return code, transaction_instance, feedback
