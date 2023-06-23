@@ -9,12 +9,11 @@ The Paymob Python package provides convenient access to the `Paymob` APIs from a
 Current version only supports the following services:
 - `Accept`
 
-`Payouts` and the other services will be added in the next releases.
+`Payouts` and other services will be added in the next releases.
 
 # Requirements
 Before you begin, ensure you have met the following requirements:
 * Python 3.8+
-* You have installed the latest version of [python-decouple](https://pypi.org/project/python-decouple)
 
 # Installation Instructions
 
@@ -22,14 +21,14 @@ You don't need this source code unless you want to modify the package. If you ju
 want to use the package, just run:
 
 ```bash
-pip install --upgrade paymob
+pip install --upgrade paymob-solutions
 ```
 
 # Usage
 
 ### Services
 
-1- [Accept Client](docs/services/accept.md)
+1- [Accept](docs/services/accept.md)
 
 ---
 
@@ -43,6 +42,7 @@ Each API Call retrieves a tuple which contains three values (Code, An Object of 
     - `message`: A human readable description of the [Code](#code)
     - `data`: A `dict` represents the actual API's Response
     - `status_code`: Status code that has been returned from the API (`2xx`, `4xx`, `5xx`)
+    - `exception_error`: In case an exception is raised (Based on this [Codes](#error-codes)), you can see the error using this attribute.
 
 **Successful API calls will return the following values:**
 
@@ -52,6 +52,7 @@ Each API Call retrieves a tuple which contains three values (Code, An Object of 
     - `message`: A success message depending on the API (Example: Get Order API will return a message like "Successfully Retrieved Order: 1")
     - `data`: `None`
     - `status_code`: `2xx`
+    - `exception_error`: `None`
 
 **Example:**
 ```python
@@ -68,6 +69,7 @@ print(f"Transaction ID: {transaction.id}")
 print(f"Feedback Message: {feedback.message}")
 print(f"Feedback Data: {feedback.data}")
 print(f"Feedback Status Code: {feedback.status_code}")
+print(f"Feedback Exception Error: {feedback.exception_error}")
 ```
 
 Output:
@@ -78,6 +80,7 @@ Transaction ID: 111859918
 Feedback Message: Transaction: 111859918 Retrieved Successfully
 Feedback Data: None
 Feedback Status Code: 200
+Feedback Exception Error: None
 ```
 
 
@@ -89,6 +92,7 @@ Feedback Status Code: 200
     - `message`: A failure message depending on exception occured (Example: "An Error Occurred During the Request")
     - `data`: API's response `dict` (`response.json()`)
     - `status_code`: `4xx` or `5xx`
+    - `exception_error`: `Expecting value: line 1 column 1 (char 0)`
 
 
 **Example:**
@@ -105,6 +109,8 @@ print(f"Transaction: {transaction}")
 print(f"Feedback Message: {feedback.message}")
 print(f"Feedback Data: {feedback.data}")
 print(f"Feedback Status Code: {feedback.status_code}")
+print(f"Feedback Exception Error: {feedback.exception_error}")
+
 ```
 
 Output:
@@ -114,6 +120,7 @@ Transaction: None
 Feedback Message: Non 2xx Status Code Returned.
 Feedback Data: {'detail': 'Not found.'}
 Feedback Status Code: 404
+Feedback Exception Error: 404 Client Error: Not Found for url: https://accept.paymob.com/api/acceptance/transactions/112233
 ```
 
 -----
@@ -131,12 +138,12 @@ Feedback Status Code: 404
 | `JSON_DECODE_EXCEPTION` | `20` | An Error Occurred While Parsing the Response into JSON |
 | `REQUEST_EXCEPTION` | `21` | An Error Occurred During the Request |
 | `HTTP_EXCEPTION` | `22` | Non 2xx Status Code Returned |
-| `UNHANDLED_EXCEPTION` | `23` | Unhandled Exception [comment]: # Trace Error will be provided in the [message](#message) |
+| `UNHANDLED_EXCEPTION` | `23` | Unhandled Exception |
 
 
 You can import these codes like the following: 
 ```python
-from paymob.accept.response_codes import (
+from paymob.response_codes import (
     SUCCESS, 
     JSON_DECODE_EXCEPTION, 
     REQUEST_EXCEPTION, 
@@ -154,6 +161,8 @@ You can customized some behaves of `Paymob` by adding the following settings in 
 **- ACCEPT_APIS_TIMEOUT_SECONDES**
 
 Sets Timeout for API Calls (The connect timeout is the number of seconds Requests will wait for your client to establish a connection or read data with/from `Paymob` server)
+
+Default value is `10`
 
 **Example:**
 ```bash
