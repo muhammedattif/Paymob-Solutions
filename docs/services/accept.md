@@ -1,4 +1,4 @@
-# 1- Requirements
+# 1 Requirements
 
 Before starting to use Accept APIs it needs to be configured with your account's secret keys which is
 available in your [Accept Dashboard][accept-dashboard]. in `.env` Set the following variables:
