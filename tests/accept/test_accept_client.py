@@ -819,3 +819,53 @@ class TestAcceptClient(AbstractTestCase):
         mock_post.assert_called_with(url=URLsConfig.GET_TRANSACTION_BY_MERCHANT_ID, json=request_body)
 
     # ======= End get_transaction By order/Merchant ID Tests =======
+
+    # def test_integration(self):
+    #     import pytest
+    #     if config("SKIP_INTEGRATION_TESTS", cast=bool):
+    #         pytest.skip("Skip Integration Tests")
+
+    #     from paymob.accept.utils import AcceptUtils
+    #     client = AcceptAPIClient()
+
+    #     mid_key = "item"
+    #     identifier = "1"
+    #     merchant_order_id = AcceptUtils.generate_merchant_order_id(mid_key=mid_key, identifier=identifier)
+    #     amount_cents = 1000
+    #     currency = "EGP"
+    #     code, order, feedback = client.create_order(
+    #         merchant_order_id=merchant_order_id,
+    #         amount_cents=amount_cents,
+    #         currency=currency
+    #     )
+    #     self.assertEqual(code, SUCCESS)
+    #     self.assertEqual(feedback.status_code, 201)
+    #     self.assertHasAttr(order, "id")
+
+    #     amount_cents = 1000
+    #     currency = "EGP"
+    #     billing_data = {
+    #         "first_name": "test",
+    #         "last_name": "test",
+    #         "email": "test@test.test",
+    #         "phone_number": "01000000000",
+    #         "floor": "NA",
+    #         "apartment": "NA",
+    #         "street": "NA",
+    #         "building": "NA",
+    #         "postal_code": "NA",
+    #         "city": "NA",
+    #         "country": "NA",
+    #         "state": "NA",
+    #     }
+    #     integration_id = 3871725
+    #     code, payment_key, feedback = client.create_payment_key(
+    #         order_id=order.id,
+    #         amount_cents=amount_cents,
+    #         currency=currency,
+    #         billing_data=billing_data,
+    #         integration_id=integration_id,
+    #     )
+    #     self.assertEqual(code, SUCCESS)
+    #     self.assertEqual(feedback.status_code, 201)
+    #     self.assertIsNotNone(payment_key)
