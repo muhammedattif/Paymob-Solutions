@@ -9,16 +9,10 @@ from paymob.response_codes import SUCCESS
 
 from .config import URLsConfig
 from .connection import AcceptConnection
-from .data_classes import TransactionDataClass
 from .factories import DynamicTransactionFactory
 
-# TODO: Allow it to return DynamicTransactionFactory or TransactionDataClass once Validation settings is supported
-AbstractTransaction = (
-    DynamicTransactionFactory or TransactionDataClass
-)  # NOTE: It will always return DynamicTransactionFactory for Now
 
-
-class Transaction(AbstractTransaction):
+class Transaction(DynamicTransactionFactory):
     """Final Transaction Class"""
 
     def __init__(self, connection: AcceptConnection = None, *args, **kwargs) -> None:
