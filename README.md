@@ -21,6 +21,8 @@ Current version only supports the following services:
 
 `Payouts` and other services will be added in the next releases.
 
+**Full documentation is avilable on [Github Repo][github-repo]**
+
 # 2- Requirements
 Before you begin, ensure you have met the following requirements:
 * Python 3.8+
@@ -46,17 +48,17 @@ pip install --upgrade paymob-solutions
 
 Each API Call retrieves a tuple which contains three values (Code, An Object of the API's Return, ResponseFeedBack Instance)
 
-- **Code**: A Number that represents API state. [Codes Reference](#codes-reference) <span id="code"></span>
+- **Code**: A Number that represents API state. [Codes Reference](#5--codes-reference) <span id="code"></span>
 - **API's Return Object**: An object class of the API's Return and its attributes can be accessed using dot notation.
 - **Response FeedBack**: An object of `ResponseFeedBack` class which has the following attributes: <span id="feedback"></span>
-    - `message`: A human readable description of the [Code](#code)
+    - `message`: A human readable description of the [Code](#L49)
     - `data`: A `dict` represents the actual API's Response
     - `status_code`: Status code that has been returned from the API (`2xx`, `4xx`, `5xx`)
-    - `exception_error`: In case an exception is raised (Based on this [Codes](#error-codes)), you can see the error using this attribute.
+    - `exception_error`: In case an exception is raised (Based on this [Codes](#52-error-codes)), you can see the error using this attribute.
 
 **Successful API calls will return the following values:**
 
-- **Code**: [One of the Following Codes](#success-codes)
+- **Code**: [One of the Following Codes](#51-success-codes)
 - **API's Return Object**: `object` (Depending on the API response)
 - **Response FeedBack**: `ResponseFeedBack` Object with the following attributes:
     - `message`: A success message depending on the API (Example: Get Order API will return a message like "Successfully Retrieved Order: 1")
@@ -96,7 +98,7 @@ Feedback Exception Error: None
 
 **Unsuccessful API calls will return the following values:**
 
-- **Code**: [One of the Following Codes](#error-codes)
+- **Code**: [One of the Following Codes](#52-error-codes)
 - **API's Return Object**: Example: Get Transaction API will return a `Transaction` instance (transaction.id, transaction.success, ..etc)
 - **Response FeedBack**: `ResponseFeedBack` Object with the following attributes:
     - `message`: A failure message depending on exception occured (Example: "An Error Occurred During the Request")
@@ -182,3 +184,6 @@ ACCEPT_APIS_TIMEOUT_SECONDES=20
 **- VALIDATE_API_RESPONSE** (Not Added Yet)
 
 Automatically validates the returned data of the APIs to ensure that there are no changed keys or data types
+
+
+[github-repo]: https://github.com/muhammedattif/Paymob-Solutions
