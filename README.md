@@ -3,6 +3,16 @@
 [![python](https://img.shields.io/badge/Python-v3.8-3776AB.svg?style=flat&logo=python&logoColor=yellow)](https://www.python.org)  [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)  [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 
+## Table of Contents
+
+- [Description](#1--description)
+- [Requirements](#2--requirements)
+- [Installation Instructions](#3--installation-instructions)
+- [Usage](#4--usage)
+  - [Services](#41-services)
+  - [Handling APIs Response](#42-handling-apis-response)
+- [Codes Reference](#5--codes-reference)
+
 # 1- Description
 
 The Paymob Python package provides convenient access to the `Paymob` APIs from applications written in the Python language.
