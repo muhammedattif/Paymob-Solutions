@@ -12,7 +12,7 @@ After setting up your secret keys, now you will be able to use Accept API interf
 
 # 2- Payment Flow
 
-Payment Flow for [IFrame](#create-iframe-url) Payment
+Payment Flow for [IFrame](#53-create-iframe-url) Payment
 ```mermaid
 flowchart TD
     A(Create Order) --> B(Create Payment Key) --> C(Create IFrame)
@@ -94,7 +94,7 @@ Retrieves order data.
 
 | Parameter | Required? | Default | Description |
 | --- | --- | --- | --- |
-| `order_id` | `Yes` | - | Order ID retrieved from [Create Order API](#create-order) |
+| `order_id` | `Yes` | - | Order ID retrieved from [Create Order API](#32-create-order) |
 
 
 **Example**
@@ -120,7 +120,7 @@ At this step, you will obtain a payment_key token. This key will be used to auth
 
 | Parameter | Required? | Default | Description |
 | --- | --- | --- | --- |
-| `order_id` | `Yes` | - | Order ID retrieved from [Create Order API](#create-order) |
+| `order_id` | `Yes` | - | Order ID retrieved from [Create Order API](#32-create-order) |
 | `amount_cents` | `Yes` | - | The price should be paid through this payment channel with this payment key token |
 | `currency` | `Yes` | - | The currency related to this payment |
 | `billing_data` | `Yes` | `dict` | The billing data related to the customer related to this payment |
@@ -163,7 +163,7 @@ After creating the payment key, you may need to processed to `Mobile Wallets` pa
 
 | Parameter | Required? | Default | Description |
 | --- | --- | --- | --- |
-| `payment_key` | `Yes` | - | Payment Key obtained from [Create Payment Key](#create-payment-key) |
+| `payment_key` | `Yes` | - | Payment Key obtained from [Create Payment Key](#34-create-payment-key) |
 | `identifier` | `Yes` | - | Wallet Mobile Number |
 
 
@@ -198,7 +198,7 @@ After creating the payment key, you may need to processed to `Kiosk` payment, so
 
 | Parameter | Required? | Description |
 | --- | --- | --- |
-| `payment_key` | `Yes` | Payment Key obtained from [Create Payment Key](#create-payment-key) |
+| `payment_key` | `Yes` | Payment Key obtained from [Create Payment Key](#34-create-payment-key) |
 
 
 **Example**
@@ -229,7 +229,7 @@ After creating the payment key, you may need to processed to `Cash` payment, so 
 
 | Parameter | Required? | Description |
 | --- | --- | --- |
-| `payment_key` | `Yes` | Payment Key obtained from [Create Payment Key](#create-payment-key) |
+| `payment_key` | `Yes` | Payment Key obtained from [Create Payment Key](#34-create-payment-key) |
 
 **Example**
 
@@ -256,7 +256,7 @@ Now you've received your customer's card token, in order to perform recurring pa
 
 | Parameter | Required? | Description |
 | --- | --- | --- |
-| `payment_key` | `Yes` | Payment Key obtained from [Create Payment Key](#create-payment-key) |
+| `payment_key` | `Yes` | Payment Key obtained from [Create Payment Key](#34-create-payment-key) |
 | `card_token` | `Yes` | Card Token tou received in the card token callback |
 
 
@@ -886,7 +886,7 @@ iframe = AcceptUtils.create_iframe_url(
 | Parameter | Required? | Description |
 | --- | --- | --- |
 | `iframe_id` | `Yes` | IFrame ID of the payment method [Get it from here][accept-iframes] |
-| `payment_key` | `Yes` | Payment Key obtained from [Create Payment Key](#create-payment-key) |
+| `payment_key` | `Yes` | Payment Key obtained from [Create Payment Key](#34-create-payment-key) |
 
 
 # 6- Handling Callbacks
@@ -945,7 +945,7 @@ Transaction Callback obj attributes varies depending on the payment method, so y
 
 <br>
 
-After receiving a callback you must validate it to verify Accept's identity and integrity of its data. We've talked about `HMAC` before, and you can use the example we've talked about in [HMAC-Validation](#hmac-validation) section or you can use `AcceptCallback`.
+After receiving a callback you must validate it to verify Accept's identity and integrity of its data. We've talked about `HMAC` before, and you can use the example we've talked about in [HMAC-Validation](#4--hmac-validation) section or you can use `AcceptCallback`.
 
 `AcceptCallback` is a dynamic callback class that takes the callback dict (Transaction, Card Token, or Delivery Status) and the `HMAC` you've received and turns it into a class object with an HMAC validation check, so you don't need to import `HMACValidator` to check it.
 

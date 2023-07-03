@@ -51,7 +51,7 @@ Each API Call retrieves a tuple which contains three values (Code, An Object of 
 - **Code**: A Number that represents API state. [Codes Reference](#5--codes-reference) <span id="code"></span>
 - **API's Return Object**: An object class of the API's Return and its attributes can be accessed using dot notation.
 - **Response FeedBack**: An object of `ResponseFeedBack` class which has the following attributes: <span id="feedback"></span>
-    - `message`: A human readable description of the [Code](#L49)
+    - `message`: A human readable description of the [Code](#L51)
     - `data`: A `dict` represents the actual API's Response
     - `status_code`: Status code that has been returned from the API (`2xx`, `4xx`, `5xx`)
     - `exception_error`: In case an exception is raised (Based on this [Codes](#52-error-codes)), you can see the error using this attribute.
