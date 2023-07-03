@@ -17,3 +17,10 @@ import_heading_stdlib="Python Standard Library Imports"
 import_heading_thirdparty="Other Third Party Imports"
 import_heading_firstparty="First Party Imports"
 import_heading_folder="Local Folder Imports"
+
+
+[build-system]
+requires = ["setuptools>=45", "setuptools_scm[toml]>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools_scm]
