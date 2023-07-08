@@ -17,7 +17,7 @@ class AcceptUtils:
         Returns:
             str: Internal Order ID (Format: <mid_key>_<identifier>__<time>)
         """
-        return "{0}_{1}__{2}".format(mid_key, identifier, int(time.time()))
+        return f"{mid_key}_{identifier}__{int(time.time())}"
 
     @staticmethod
     def extract_mid_key_and_identifier(merchant_order_id: str) -> Tuple[Union[str, None], Union[str, None]]:

@@ -4,29 +4,25 @@ from __future__ import annotations
 # Python Standard Library Imports
 from typing import Tuple, Union
 
+# First Party Imports
+from paymob.response_codes import SUCCESS
+
 from .config import URLsConfig
 from .connection import AcceptConnection
-from .data_classes import TransactionDataClass
 from .factories import DynamicTransactionFactory
-from .response_codes import SUCCESS
-
-# TODO: Allow it to return DynamicTransactionFactory or TransactionDataClass once Validation settings is supported
-AbstractTransaction = (
-    DynamicTransactionFactory or TransactionDataClass
-)  # NOTE: It will always return DynamicTransactionFactory for Now
 
 
-class Transaction(AbstractTransaction):
+class Transaction(DynamicTransactionFactory):
     """Final Transaction Class"""
 
-    def __init__(self, connection: AcceptConnection, *args, **kwargs) -> None:
+    def __init__(self, connection: AcceptConnection = None, *args, **kwargs) -> None:
         """Initializing Transaction Attributes
 
         Args:
-            connection (AcceptConnection): Accept Connection Insatance
+            connection (AcceptConnection): Accept Connection Insatance. Defaults to None.
         """
         super().__init__(*args, **kwargs)
-        self.connection = connection
+        self.connection = connection or AcceptConnection()
 
     def __str__(self) -> str:
         if hasattr(self, "id"):
@@ -51,7 +47,7 @@ class Transaction(AbstractTransaction):
             "amount_cents": amount_cents,
         }
 
-        code, transaction_data, message = self.connection.post(
+        code, feedback = self.connection.post(
             url=URLsConfig.REFUND_TRANSACTION,
             json=request_body,
         )
@@ -59,11 +55,9 @@ class Transaction(AbstractTransaction):
         # TODO: Validates APIs Return Data Option
         transaction_instance = None
         if code == SUCCESS:
-            transaction_instance = Transaction(connection=self.connection, **transaction_data)
-            message = "Transaction: {0} Refund Processed Successfully".format(
-                self.id,
-            )
-        return code, transaction_instance, message
+            transaction_instance = Transaction(connection=self.connection, **feedback.data)
+            feedback.message = f"Transaction: {self.id} Refund Processed Successfully"
+        return code, transaction_instance, feedback
 
     def void(
         self,
@@ -78,7 +72,7 @@ class Transaction(AbstractTransaction):
             "transaction_id": self.id,
         }
 
-        code, transaction_data, message = self.connection.post(
+        code, feedback = self.connection.post(
             url=URLsConfig.VOID_TRANSACTION,
             json=request_body,
         )
@@ -86,11 +80,9 @@ class Transaction(AbstractTransaction):
         # TODO: Validates APIs Return Data Option
         transaction_instance = None
         if code == SUCCESS:
-            transaction_instance = Transaction(connection=self.connection, **transaction_data)
-            message = "Transaction: {0} Void Processed Successfully".format(
-                self.id,
-            )
-        return code, transaction_instance, message
+            transaction_instance = Transaction(connection=self.connection, **feedback.data)
+            feedback.message = f"Transaction: {self.id} Void Processed Successfully"
+        return code, transaction_instance, feedback
 
     def capture(
         self,
@@ -110,16 +102,14 @@ class Transaction(AbstractTransaction):
             "amount_cents": amount_cents,
         }
 
-        code, transaction_data, message = self.connection.post(
-            url=URLsConfig.CAPTURE,
+        code, feedback = self.connection.post(
+            url=URLsConfig.CAPTURE_TRANSACTION,
             json=request_body,
         )
 
         # TODO: Validates APIs Return Data Option
         transaction_instance = None
         if code == SUCCESS:
-            transaction_instance = Transaction(connection=self.connection, **transaction_data)
-            message = "Transaction: {0} Capture Processed Successfully".format(
-                self.id,
-            )
-        return code, transaction_instance, message
+            transaction_instance = Transaction(connection=self.connection, **feedback.data)
+            feedback.message = f"Transaction: {self.id} Capture Processed Successfully"
+        return code, transaction_instance, feedback

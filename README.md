@@ -5,63 +5,66 @@
 
 ## Table of Contents
 
-- [Description](#description)
-- [Requirements](#requirements)
-- [Installation Instructions](#installation-instructions)
-- [Usage](#usage)
-  - [Services](#services)
-  - [Handling APIs Response](#handling-apis-response)
-- [Codes Reference](#codes-reference)
+- [Description](#1--description)
+- [Requirements](#2--requirements)
+- [Installation Instructions](#3--installation-instructions)
+- [Usage](#4--usage)
+  - [Services](#41-services)
+  - [Handling APIs Response](#42-handling-apis-response)
+- [Codes Reference](#5--codes-reference)
 
-# Description
+# 1- Description
 
 The Paymob Python package provides convenient access to the `Paymob` APIs from applications written in the Python language.
 Current version only supports the following services:
 - `Accept`
 
-`Payouts` and the other services will be added in the next releases.
+`Payouts` and other services will be added in the next releases.
 
-# Requirements
+**Full documentation is avilable on [Github Repo][github-repo]**
+
+# 2- Requirements
 Before you begin, ensure you have met the following requirements:
 * Python 3.8+
-* You have installed the latest version of [python-decouple](https://pypi.org/project/python-decouple)
 
-# Installation Instructions
+# 3- Installation Instructions
 
 You don't need this source code unless you want to modify the package. If you just
 want to use the package, just run:
 
 ```bash
-pip install --upgrade paymob
+pip install --upgrade paymob-solutions
 ```
 
-# Usage
+# 4- Usage
 
-### Services
+### 4.1 Services
 
-1- [Accept Client](docs/services/accept.md)
+1- [Accept](docs/services/accept.md)
 
 ---
 
-### Handling APIs Response
+### 4.2 Handling APIs Response
 
 Each API Call retrieves a tuple which contains three values (Code, An Object of the API's Return, ResponseFeedBack Instance)
 
-- **Code**: A Number that represents API state. [Codes Reference](#codes-reference) <span id="code"></span>
+- **Code**: A Number that represents API state. [Codes Reference](#5--codes-reference) <span id="code"></span>
 - **API's Return Object**: An object class of the API's Return and its attributes can be accessed using dot notation.
 - **Response FeedBack**: An object of `ResponseFeedBack` class which has the following attributes: <span id="feedback"></span>
-    - `message`: A human readable description of the [Code](#code)
+    - `message`: A human readable description of the [Code](#L51)
     - `data`: A `dict` represents the actual API's Response
     - `status_code`: Status code that has been returned from the API (`2xx`, `4xx`, `5xx`)
+    - `exception_error`: In case an exception is raised (Based on this [Codes](#52-error-codes)), you can see the error using this attribute.
 
 **Successful API calls will return the following values:**
 
-- **Code**: [One of the Following Codes](#success-codes)
+- **Code**: [One of the Following Codes](#51-success-codes)
 - **API's Return Object**: `object` (Depending on the API response)
 - **Response FeedBack**: `ResponseFeedBack` Object with the following attributes:
     - `message`: A success message depending on the API (Example: Get Order API will return a message like "Successfully Retrieved Order: 1")
     - `data`: `None`
     - `status_code`: `2xx`
+    - `exception_error`: `None`
 
 **Example:**
 ```python
@@ -78,6 +81,7 @@ print(f"Transaction ID: {transaction.id}")
 print(f"Feedback Message: {feedback.message}")
 print(f"Feedback Data: {feedback.data}")
 print(f"Feedback Status Code: {feedback.status_code}")
+print(f"Feedback Exception Error: {feedback.exception_error}")
 ```
 
 Output:
@@ -88,17 +92,19 @@ Transaction ID: 111859918
 Feedback Message: Transaction: 111859918 Retrieved Successfully
 Feedback Data: None
 Feedback Status Code: 200
+Feedback Exception Error: None
 ```
 
 
 **Unsuccessful API calls will return the following values:**
 
-- **Code**: [One of the Following Codes](#error-codes)
+- **Code**: [One of the Following Codes](#52-error-codes)
 - **API's Return Object**: Example: Get Transaction API will return a `Transaction` instance (transaction.id, transaction.success, ..etc)
 - **Response FeedBack**: `ResponseFeedBack` Object with the following attributes:
     - `message`: A failure message depending on exception occured (Example: "An Error Occurred During the Request")
     - `data`: API's response `dict` (`response.json()`)
     - `status_code`: `4xx` or `5xx`
+    - `exception_error`: `Expecting value: line 1 column 1 (char 0)`
 
 
 **Example:**
@@ -115,6 +121,8 @@ print(f"Transaction: {transaction}")
 print(f"Feedback Message: {feedback.message}")
 print(f"Feedback Data: {feedback.data}")
 print(f"Feedback Status Code: {feedback.status_code}")
+print(f"Feedback Exception Error: {feedback.exception_error}")
+
 ```
 
 Output:
@@ -124,29 +132,30 @@ Transaction: None
 Feedback Message: Non 2xx Status Code Returned.
 Feedback Data: {'detail': 'Not found.'}
 Feedback Status Code: 404
+Feedback Exception Error: 404 Client Error: Not Found for url: https://accept.paymob.com/api/acceptance/transactions/112233
 ```
 
 -----
 
-# Codes Reference
+# 5- Codes Reference
 
-### Success Codes
+### 5.1 Success Codes
 | Variable | Code | Description | 
 | --- | --- | --- |
 | `SUCCESS` | `10` | API Called Successfully Without any Failures |
 
-### Error Codes
+### 5.2 Error Codes
 | Variable | Code | Description | 
 | --- | --- | --- |
 | `JSON_DECODE_EXCEPTION` | `20` | An Error Occurred While Parsing the Response into JSON |
 | `REQUEST_EXCEPTION` | `21` | An Error Occurred During the Request |
 | `HTTP_EXCEPTION` | `22` | Non 2xx Status Code Returned |
-| `UNHANDLED_EXCEPTION` | `23` | Unhandled Exception [comment]: # Trace Error will be provided in the [message](#message) |
+| `UNHANDLED_EXCEPTION` | `23` | Unhandled Exception |
 
 
 You can import these codes like the following: 
 ```python
-from paymob.accept.response_codes import (
+from paymob.response_codes import (
     SUCCESS, 
     JSON_DECODE_EXCEPTION, 
     REQUEST_EXCEPTION, 
@@ -157,13 +166,15 @@ from paymob.accept.response_codes import (
 
 ----
 
-# Settings
+# 6- Settings
 
 You can customized some behaves of `Paymob` by adding the following settings in `.env` file.
 
 **- ACCEPT_APIS_TIMEOUT_SECONDES**
 
 Sets Timeout for API Calls (The connect timeout is the number of seconds Requests will wait for your client to establish a connection or read data with/from `Paymob` server)
+
+Default value is `10`
 
 **Example:**
 ```bash
@@ -173,3 +184,6 @@ ACCEPT_APIS_TIMEOUT_SECONDES=20
 **- VALIDATE_API_RESPONSE** (Not Added Yet)
 
 Automatically validates the returned data of the APIs to ensure that there are no changed keys or data types
+
+
+[github-repo]: https://github.com/muhammedattif/Paymob-Solutions
