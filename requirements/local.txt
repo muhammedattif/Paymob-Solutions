@@ -1,0 +1,7 @@
+multimethod==1.9.1
+pre-commit==3.3.3
+pydantic==2.0.2
+pytest==7.4.0
+python-decouple==3.8
+requests==2.31.0
+virtualenv==20.23.1

@@ -21,7 +21,7 @@ cd Paymob
 
 3. Install the necessary dependencies:
 ```shell
-pip install -r requirements.txt
+pip install -r requirements/local.txt
 ```
 
 ## Step 3: Make Changes
